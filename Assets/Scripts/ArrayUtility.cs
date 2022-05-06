@@ -40,6 +40,11 @@ namespace BezierCurve
             array = newArray;
         }
 
+        public static bool IsNullOr0Length(System.Array array)
+        {
+            return array == null || array.Length == 0;
+        }
+
         public static NativeArray<T> Pin<T>(T[] array, out ulong gcHandle) where T : struct
         {
             NativeArray<T> nativeArray;

@@ -10,8 +10,10 @@ namespace BezierCurve
 {
     public static class Bezier
     {
-        #region Structs
         public enum TangentSetting { Aligned = 0, Free = 1 }
+        public enum StepSetting { PathTime = 0, Distance = 0 }
+
+        #region Structs
 
         [System.Serializable]
         public struct Point3D
@@ -231,6 +233,10 @@ namespace BezierCurve
         #region Frames3D        
         public static void GetFramesAtTimeSteps(in Point3D[] points, ref Frame3D[] frames, bool isLoop)
         {
+            if (ArrayUtility.IsNullOr0Length(points) || ArrayUtility.IsNullOr0Length(frames))
+            {
+                return;
+            }
             var job = new Frames3DAtTimeStepsJob
             {
                 points = ArrayUtility.Pin(points, out ulong pointsHandle),
@@ -244,6 +250,10 @@ namespace BezierCurve
 
         public static void GetFramesAtDistanceSteps(in Point3D[] points, ref Frame3D[] frames, bool isLoop)
         {
+            if (ArrayUtility.IsNullOr0Length(points) || ArrayUtility.IsNullOr0Length(frames))
+            {
+                return;
+            }
             var job = new Frames3DAtDistanceStepsJob
             {
                 points = ArrayUtility.Pin(points, out ulong pointsHandle),
@@ -272,6 +282,7 @@ namespace BezierCurve
                     frame = DoubleReflectionFrame(frame, p0, p1, pathTime, segmentTime);
                     frames[i] = frame;
                 }
+                LineUpNormals(ref frames);
             }
         }
 
@@ -318,6 +329,7 @@ namespace BezierCurve
                         frames[distanceIndex] = frame;
                     }
                 }
+                LineUpNormals(ref frames);
             }
         }
 
@@ -371,6 +383,34 @@ namespace BezierCurve
                 //    return vectorToReflect - (2 / math.lengthsq(normal)) * math.dot(normal, vectorToReflect) * normal;
                 //}
             }
+        }
+
+        static void LineUpNormals(ref NativeArray<Frame3D> frames)
+        {
+            float radiansOffset = AngleBetween(frames[0].normal, frames[frames.Length - 1].normal);
+            for (int i = 1; i < frames.Length; i++)
+            {
+                Frame3D frame = frames[i];
+                float radians = math.lerp(0, radiansOffset, frame.pathTime);
+                quaternion rotation = quaternion.AxisAngle(frame.tangent, radians);
+                frame.normal = math.mul(rotation, frame.normal);
+                frames[i] = frame;
+            }
+        }
+
+        static float AngleBetween(float3 v0, float3 v1)
+        {
+            float3 n = math.cross(v0, v1);
+            float dot = math.dot(v0, v1);
+            float determinant = math.dot(math.normalize(n), n);
+            return math.atan2(determinant, dot);
+        }
+
+        static float AngleRadiansBetween2Vectors(float3 v0, float3 v1)
+        {
+            float dot = math.dot(v0, v1);
+            float lengthProduct = math.sqrt(math.lengthsq(v0) * math.lengthsq(v1));
+            return math.acos(dot / lengthProduct);
         }
 
         static void GetDistancesAtTimeSteps(in NativeArray<Point3D> points, ref NativeArray<float> distances, bool isLoop)
@@ -432,6 +472,10 @@ namespace BezierCurve
 
         public static void GetFramesAtTimeSteps(in Point2D[] points, ref Frame2D[] frames, bool isLoop)
         {
+            if (ArrayUtility.IsNullOr0Length(points) || ArrayUtility.IsNullOr0Length(frames))
+            {
+                return;
+            }
             for (int i = 0; i < frames.Length; i++)
             {
                 float pathTime = (float)i / (frames.Length - 1);
@@ -441,6 +485,10 @@ namespace BezierCurve
 
         public static void GetFramesAtDistanceSteps(in Point2D[] points, ref Frame2D[] frames, bool isLoop)
         {
+            if (ArrayUtility.IsNullOr0Length(points) || ArrayUtility.IsNullOr0Length(frames))
+            {
+                return;
+            }
             var job = new Frames2DAtDistanceStepsJob
             {
                 points = ArrayUtility.Pin(points, out ulong pointsHandle),
