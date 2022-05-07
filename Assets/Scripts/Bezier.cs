@@ -9,9 +9,9 @@ using Unity.Jobs;
 namespace BezierCurve
 {
     public static class Bezier
-    {
-        public enum TangentSetting { Aligned = 0, Free = 1 }
-        public enum StepSetting { PathTime = 0, Distance = 0 }
+    {        
+        [System.Serializable] public enum TangentSetting { Aligned = 0, Free = 1 }
+        [System.Serializable] public enum StepSetting { Time = 0, Distance = 1 }
 
         #region Structs
 
@@ -21,6 +21,7 @@ namespace BezierCurve
             public float3 backTangent;
             public float3 position;
             public float3 frontTangent;
+            public TangentSetting tangentSetting;
             public float3 BackHandle => position + backTangent;
             public float3 FrontHandle => position + frontTangent;
         }
@@ -31,6 +32,7 @@ namespace BezierCurve
             public float2 backTangent;
             public float2 position;
             public float2 frontTangent;
+            public TangentSetting tangentSetting;
             public float2 BackHandle => position + backTangent;
             public float2 FrontHandle => position + frontTangent;
         }

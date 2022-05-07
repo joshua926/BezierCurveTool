@@ -7,7 +7,6 @@ namespace BezierCurve
     public class Path3D
     {
         [SerializeField] Bezier.Point3D[] points;
-        [SerializeField] Bezier.TangentSetting[] tangentSettings;
         [SerializeField] bool isLoop;
         const float defaultTangentLengthMultiplier = .3f;
         public int PointCount => points.Length;
@@ -30,18 +29,15 @@ namespace BezierCurve
                     backTangent = new float3(0, -2, 0),
                     position = 0,
                     frontTangent = new float3(0, 2, 0),
+                    tangentSetting = Bezier.TangentSetting.Aligned,
                 },
                 new Bezier.Point3D
                 {
                     backTangent = new float3(-.5f, 1, 0),
                     position = new float3(1.5f, 2, 0),
                     frontTangent = new float3(.5f, -1f, 0),
+                    tangentSetting = Bezier.TangentSetting.Aligned,
                 },
-            };
-            tangentSettings = new Bezier.TangentSetting[]
-            {
-                Bezier.TangentSetting.Aligned,
-                Bezier.TangentSetting.Aligned,
             };
         }
 
@@ -67,7 +63,7 @@ namespace BezierCurve
         {
             var point = points[i];
             point.backTangent = value;
-            if (tangentSettings[i] == Bezier.TangentSetting.Aligned)
+            if (point.tangentSetting == Bezier.TangentSetting.Aligned)
             {
                 AlignTangents(ref point.frontTangent, point.backTangent);
             }
@@ -78,7 +74,7 @@ namespace BezierCurve
         {
             var point = points[i];
             point.frontTangent = value;
-            if (tangentSettings[i] == Bezier.TangentSetting.Aligned)
+            if (point.tangentSetting == Bezier.TangentSetting.Aligned)
             {
                 AlignTangents(ref point.backTangent, point.frontTangent);
             }
@@ -120,9 +116,9 @@ namespace BezierCurve
                 backTangent = -offset,
                 position = position,
                 frontTangent = offset,
+                tangentSetting = Bezier.TangentSetting.Aligned,
             };
             ArrayUtility.Add(ref points, point);
-            ArrayUtility.Add(ref tangentSettings, Bezier.TangentSetting.Aligned);
         }
 
         public void InsertPoint(float3 position, float time)
@@ -148,15 +144,14 @@ namespace BezierCurve
                 backTangent = math.normalize(p0Direction - p2Direction) * p0Distance * defaultTangentLengthMultiplier,
                 position = position,
                 frontTangent = math.normalize(p2Direction - p0Direction) * p2Distance * defaultTangentLengthMultiplier,
+                tangentSetting = Bezier.TangentSetting.Aligned,
             };
             ArrayUtility.Insert(ref points, point, p0Index + 1);
-            ArrayUtility.Insert(ref tangentSettings, Bezier.TangentSetting.Aligned, p0Index + 1);
         }
 
         public void DeletePoint(int i)
         {
             ArrayUtility.RemoveAt(ref points, i);
-            ArrayUtility.RemoveAt(ref tangentSettings, i);
         }
 
         public void GetFramesAtTimeSteps(ref Bezier.Frame3D[] frames)

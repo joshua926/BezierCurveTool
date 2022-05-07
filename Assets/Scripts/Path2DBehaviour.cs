@@ -4,13 +4,12 @@ using UnityEngine;
 
 namespace BezierCurve
 {
-    [CreateAssetMenu(fileName = "Path3D Asset", menuName = "Path3D Asset")]
-    public class Path3DSO : ScriptableObject
+    public class Path2DBehaviour : MonoBehaviour
     {
-        [SerializeField] Path3D path;
+        [SerializeField] Path2D path;
         [SerializeField, Min(2)] int frameCount;
-        [SerializeField] Bezier.StepSetting stepSetting = Bezier.StepSetting.Distance;
-        [System.NonSerialized] Path3DFrames frames;        
+        [SerializeField] Bezier.StepSetting stepSetting;
+        [System.NonSerialized] Path2DFrames frames;        
 
         void OnEnable()
         {
@@ -20,7 +19,7 @@ namespace BezierCurve
             }
         }
 
-        public Bezier.Frame3D GetLerpedFrame(float frameArrayTime)
+        public Bezier.Frame2D GetLerpedFrame(float frameArrayTime)
         {
             if (frames == null || frames.Length <= 1)
             {
@@ -31,7 +30,7 @@ namespace BezierCurve
 
         void CreateFrames()
         {
-            frames = new Path3DFrames(frameCount, stepSetting);
+            frames = new Path2DFrames(frameCount, stepSetting);
             frames.Recalculate(path);
         }
     }

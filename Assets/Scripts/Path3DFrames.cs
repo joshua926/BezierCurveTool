@@ -30,7 +30,7 @@ namespace BezierCurve
         {
             if (path == null || path.PointCount <= 1) { return; }
             if (frames == null || frames.Length == 0) { return; }
-            if (stepSetting == Bezier.StepSetting.PathTime)
+            if (stepSetting == Bezier.StepSetting.Time)
             {
                 path.GetFramesAtTimeSteps(ref frames);
             }

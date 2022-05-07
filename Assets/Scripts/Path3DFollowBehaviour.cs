@@ -6,7 +6,7 @@ namespace BezierCurve
 {
     public class Path3DFollowBehaviour : MonoBehaviour
     {
-        [SerializeField] Path3DSO path;
+        [SerializeField] Path3DBehaviour path;
         [Tooltip("Speed in path percent per second.")]
         [SerializeField] float speed = .01f;
         [SerializeField, Range(0, 1)] float startPercentage = 0;
