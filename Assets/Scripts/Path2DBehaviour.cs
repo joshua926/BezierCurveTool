@@ -7,31 +7,27 @@ namespace BezierCurve
     public class Path2DBehaviour : MonoBehaviour
     {
         [SerializeField] Path2D path;
-        [SerializeField, Min(2)] int frameCount;
-        [SerializeField] Bezier.StepSetting stepSetting;
-        [System.NonSerialized] Path2DFrames frames;        
+        [SerializeField, Min(2)] int frameCount = 32;
+        [SerializeField] Bezier.StepSetting stepSetting = Bezier.StepSetting.Distance;
+        [System.NonSerialized] Path2DFrames frames;
 
-        void OnEnable()
+        void Awake()
         {
-            if (frames == null || frames.Length <= 1)
-            {
-                CreateFrames();
-            }
+            TryCreateFrames();
         }
 
         public Bezier.Frame2D GetLerpedFrame(float frameArrayTime)
         {
-            if (frames == null || frames.Length <= 1)
-            {
-                CreateFrames();
-            }
             return frames.Lerp(frameArrayTime);
         }
 
-        void CreateFrames()
+        void TryCreateFrames()
         {
-            frames = new Path2DFrames(frameCount, stepSetting);
-            frames.Recalculate(path);
+            if (frames == null || frames.Length != frameCount)
+            {
+                frames = new Path2DFrames(frameCount, stepSetting);
+                frames.Recalculate(path);
+            }
         }
     }
 }
