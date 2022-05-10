@@ -4,30 +4,36 @@ using UnityEngine;
 
 namespace BezierCurve
 {
+    [ExecuteAlways]
     public partial class Path3DBehaviour : MonoBehaviour
     {
-        [SerializeField] Path3D path;
-        [SerializeField, Min(2)] int frameCount = 32;
-        [SerializeField] Bezier.StepSetting stepSetting = Bezier.StepSetting.Distance;
-        [System.NonSerialized] Path3DFrames frames;        
+        [SerializeField] Path path;
+
+        public int FrameCount => path.FrameCount;
 
         void Awake()
         {
-            TryCreateFrames();
+            path.UpdateCache();
         }
 
-        public Bezier.Frame3D GetLerpedFrame(float frameArrayTime)
+        public Frame GetFrameAtIndex(int i)
         {
-            return frames.Lerp(frameArrayTime);
+            return path.Cache.GetFrameAtIndex(i);
         }
 
-        void TryCreateFrames()
+        public Frame GetFrameAtTime(float pathTime)
         {
-            if (frames == null || frames.Length != frameCount)
-            {
-                frames = new Path3DFrames(frameCount, stepSetting);
-                frames.Recalculate(path);
-            }
+            return path.Cache.GetFrameAtTime(pathTime);
+        }
+
+        public Frame GetFrameAtDistance(float distance)
+        {
+            return path.Cache.GetFrameAtDistance(distance);
+        }
+
+        public Frame GetFrameAtDistancePercent(float distancePercent)
+        {
+            return path.Cache.GetFrameAtDistancePercent(distancePercent);
         }
     }
 }

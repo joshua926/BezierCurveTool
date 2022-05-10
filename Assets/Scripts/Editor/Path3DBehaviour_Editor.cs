@@ -5,22 +5,18 @@ namespace BezierCurve
 {
     public partial class Path3DBehaviour
     {
-        [DrawGizmo(GizmoType.NonSelected | GizmoType.Selected)]
-        public static void DrawGizmo(Path3DBehaviour b, GizmoType gizmoType)
-        {
-            b.TryCreateFrames();
-            var frames = b.frames;
-            for (int i = 0; i < frames.Length - 1; i++)
+        private void OnDrawGizmos()
+        {            
+            for (int i = 0; i < path.SegmentCount; i++)
             {
-                Gizmos.DrawLine(
-                    frames[i].position,
-                    frames[i + 1].position);
+                var s = path.GetSegmentAtIndex(i);
+                Handles.DrawBezier(s.points[0], s.points[3], s.points[1], s.points[2], Color.green, null, 3);
             }
         }
 
-        private void OnValidate()
+        private void OnEnable()
         {
-            TryCreateFrames();
+            path.UpdateCache();
         }
     }        
 }

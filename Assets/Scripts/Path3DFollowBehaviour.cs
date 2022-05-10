@@ -31,7 +31,7 @@ namespace BezierCurve
 
         void SetTransform(float pathPercent)
         {
-            var frame = path.GetLerpedFrame(pathPercent);
+            var frame = path.GetFrameAtTime(pathPercent);
             transform.position = frame.position;
             transform.rotation = Quaternion.LookRotation(frame.tangent, frame.normal);
         }

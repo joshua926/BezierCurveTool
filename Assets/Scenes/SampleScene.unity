@@ -132,7 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 398007005}
-  - component: {fileID: 398007004}
+  - component: {fileID: 398007006}
   m_Layer: 0
   m_Name: Path
   m_TagString: Untagged
@@ -140,49 +140,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &398007004
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 398007003}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b52224f3fa330d347909b70ca54acb55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  path:
-    points:
-    - backTangent:
-        x: 0
-        y: -2
-        z: 0
-      position:
-        x: 0
-        y: 0
-        z: 0
-      frontTangent:
-        x: 0
-        y: 2
-        z: 0
-      tangentSetting: 0
-    - backTangent:
-        x: -0.5
-        y: 1
-        z: 0
-      position:
-        x: 1.5
-        y: 2
-        z: 0
-      frontTangent:
-        x: 0.5
-        y: -1
-        z: 0
-      tangentSetting: 0
-    isLoop: 0
-  frameCount: 32
-  stepSetting: 1
 --- !u!4 &398007005
 Transform:
   m_ObjectHideFlags: 0
@@ -198,6 +155,61 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &398007006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 398007003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b52224f3fa330d347909b70ca54acb55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  path:
+    anchors:
+    - backTangent:
+        x: 0
+        y: -2
+        z: 0
+      position:
+        x: 0
+        y: 0
+        z: 0
+      frontTangent:
+        x: -0
+        y: 2
+        z: -0
+      handleSetting: 0
+    - backTangent:
+        x: -0.5
+        y: 1
+        z: 0
+      position:
+        x: 0.05
+        y: 4.71
+        z: 0
+      frontTangent:
+        x: 0.5
+        y: -1
+        z: -0
+      handleSetting: 0
+    - backTangent:
+        x: -0.5
+        y: 1
+        z: 0
+      position:
+        x: 3.67
+        y: 0.13
+        z: 0
+      frontTangent:
+        x: 0.5
+        y: -1
+        z: -0
+      handleSetting: 0
+    isLoop: 1
+    cacheFramesPerSegment: 8
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

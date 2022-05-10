@@ -40,7 +40,7 @@ namespace BezierCurve
             array = newArray;
         }
 
-        public static bool IsNullOr0Length(System.Array array)
+        public static bool IsNullOrEmpty(System.Array array)
         {
             return array == null || array.Length == 0;
         }
