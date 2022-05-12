@@ -1,12 +1,17 @@
 using Unity.Mathematics;
 
-namespace BezierCurve
+namespace BezierCurveDemo
 {
     [System.Serializable]
     public struct Ray
     {
-        public readonly float3 origin;
-        public readonly float3 direction;
+        public float3 origin;
+        float3 direction;
+        public float3 Direction
+        {
+            get => direction;
+            set => direction = math.normalize(value);
+        }
 
         public Ray(float3 origin, float3 direction)
         {
@@ -15,14 +20,14 @@ namespace BezierCurve
         }
 
         public static implicit operator Ray(UnityEngine.Ray ray)
-        {
+        {            
             return new Ray(ray.origin, ray.direction);
         }
 
         public float3 Projection(float3 point)
         {
-            float projectionDistanceFromOrigin = math.dot(point - origin, direction);
-            return origin + direction * projectionDistanceFromOrigin;
+            float projectionDistanceFromOrigin = math.dot(point - origin, Direction);
+            return origin + Direction * projectionDistanceFromOrigin;
         }
 
         public float Distancesq(float3 point)
@@ -32,7 +37,7 @@ namespace BezierCurve
 
         public float3 GetPoint(float distance)
         {
-            return origin + direction * distance;
+            return origin + Direction * distance;
         }
     }
 }

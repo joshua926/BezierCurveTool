@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BezierCurve
+namespace BezierCurveDemo
 {
-    public class Path3DFollowBehaviour : MonoBehaviour
+    public class PathFollowBehaviour : MonoBehaviour
     {
-        [SerializeField] Path3DBehaviour path;
+        [SerializeField] PathBehaviour path;
         [Tooltip("Speed in path percent per second.")]
         [SerializeField] float speed = .01f;
         [SerializeField, Range(0, 1)] float startPercentage = 0;
@@ -31,7 +31,7 @@ namespace BezierCurve
 
         void SetTransform(float pathPercent)
         {
-            var frame = path.GetFrameAtTime(pathPercent);
+            var frame = path.Frames.GetFrameAtTime(pathPercent);
             transform.position = frame.position;
             transform.rotation = Quaternion.LookRotation(frame.tangent, frame.normal);
         }

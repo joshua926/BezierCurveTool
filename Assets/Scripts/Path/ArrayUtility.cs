@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 
-namespace BezierCurve
+namespace BezierCurveDemo
 {
     public static class ArrayUtility
     {

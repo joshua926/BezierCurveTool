@@ -168,48 +168,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path:
-    anchors:
-    - backTangent:
-        x: 0
-        y: -2
-        z: 0
-      position:
-        x: 0
-        y: 0
-        z: 0
-      frontTangent:
-        x: -0
-        y: 2
-        z: -0
-      handleSetting: 0
-    - backTangent:
-        x: -0.5
-        y: 1
-        z: 0
-      position:
-        x: 0.05
-        y: 4.71
-        z: 0
-      frontTangent:
-        x: 0.5
-        y: -1
-        z: -0
-      handleSetting: 0
-    - backTangent:
-        x: -0.5
-        y: 1
-        z: 0
-      position:
-        x: 3.67
-        y: 0.13
-        z: 0
-      frontTangent:
-        x: 0.5
-        y: -1
-        z: -0
-      handleSetting: 0
     isLoop: 1
     cacheFramesPerSegment: 8
+    anchors:
+    - backTangent: {x: -9.63, y: -6.56, z: 0}
+      position: {x: -3.32, y: 0.06, z: 0}
+      frontTangent: {x: 3.0858657, y: 2.1021059, z: -0}
+      handleSetting: 0
+    - backTangent: {x: 3.87, y: -3.77, z: 0}
+      position: {x: -0.66, y: 4.71, z: 0}
+      frontTangent: {x: -0.8008501, y: 0.7801563, z: -0}
+      handleSetting: 0
+    - backTangent: {x: 2.42, y: 3.160011, z: 0}
+      position: {x: 3.97, y: 0.13, z: 0}
+      frontTangent: {x: -0.6797776, y: -0.88764656, z: -0}
+      handleSetting: 0
+    - backTangent: {x: -1.96, y: -2, z: 0}
+      position: {x: 0, y: 0, z: 0}
+      frontTangent: {x: 1.3998573, y: 1.4284258, z: -0}
+      handleSetting: 0
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
