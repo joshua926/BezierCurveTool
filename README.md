@@ -5,7 +5,7 @@
 This project is a 3D Bezier Curve tool for use in Unity. Its purpose is to visualize and edit a Bezier curve with an arbitrary number of segments in the 3D scene view.
 
 ## Features
-- Move anchors and handles by hand with mouse
+- Move anchors and handles by hand using the mouse
 - Handles automatically react to adjustments, maintaining smooth curvature
 - Add and delete anchors by hand with mouse clicks and the shift/control keys
 - Read positions, tangents, and normals from the curve by time and by distance
