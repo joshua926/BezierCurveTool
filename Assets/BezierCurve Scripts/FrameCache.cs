@@ -3,9 +3,9 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Burst;
 
-namespace BezierCurveDemo
+namespace BezierCurve
 {
-    public partial class Path
+    public partial class Curve
     {
         public class FrameCache
         {
@@ -69,10 +69,10 @@ namespace BezierCurveDemo
                 return frames[i];
             }
 
-            public Frame GetFrameAtTime(float pathTime)
+            public Frame GetFrameAtTime(float curveTime)
             {
-                pathTime = isLoop ? pathTime % 1 : math.clamp(pathTime, 0, 1);
-                float index = pathTime * (frames.Length - 1);
+                curveTime = isLoop ? curveTime % 1 : math.clamp(curveTime, 0, 1);
+                float index = curveTime * (frames.Length - 1);
                 int floor = (int)math.floor(index);
                 int ceil = (int)math.ceil(index);
                 float segmentTime = index - floor;
@@ -87,8 +87,8 @@ namespace BezierCurveDemo
                 int floor = (int)math.floor(index);
                 int ceil = (int)math.floor(index);
                 float segmentTime = index - floor;
-                float pathTime = math.lerp(timesAtDistanceSteps[floor], timesAtDistanceSteps[ceil], segmentTime);
-                return GetFrameAtTime(pathTime);
+                float curveTime = math.lerp(timesAtDistanceSteps[floor], timesAtDistanceSteps[ceil], segmentTime);
+                return GetFrameAtTime(curveTime);
             }
 
             public Frame GetFrameAtDistancePercent(float distancePercent)
@@ -106,13 +106,13 @@ namespace BezierCurveDemo
 
                 public void Execute()
                 {
-                    Segment segment0 = Path.GetSegmentAndSegmentTime(anchors, isLoop, 0).segment;
+                    Segment segment0 = Curve.GetSegmentAndSegmentTime(anchors, isLoop, 0).segment;
                     Frame frame = new Frame(segment0, 0);
                     framesAtTimeSteps[0] = frame;
                     for (int i = 1; i < framesAtTimeSteps.Length; i++)
                     {
-                        float pathTime = (float)i / (framesAtTimeSteps.Length - 1);
-                        (Segment segment, float segmentTime) = Path.GetSegmentAndSegmentTime(anchors, isLoop, pathTime);
+                        float curveTime = (float)i / (framesAtTimeSteps.Length - 1);
+                        (Segment segment, float segmentTime) = Curve.GetSegmentAndSegmentTime(anchors, isLoop, curveTime);
                         frame = new Frame(frame, segment, segmentTime);
                         framesAtTimeSteps[i] = frame;
                     }
@@ -146,8 +146,8 @@ namespace BezierCurveDemo
                 float3 pos1;
                 for (int i = 1; i < distances.Length; i++)
                 {
-                    float pathTime = (float)i / (distances.Length - 1);
-                    (Segment segment, float segmentTime) = Path.GetSegmentAndSegmentTime(anchors, isLoop, pathTime);
+                    float curveTime = (float)i / (distances.Length - 1);
+                    (Segment segment, float segmentTime) = Curve.GetSegmentAndSegmentTime(anchors, isLoop, curveTime);
                     pos1 = segment.Position(segmentTime);
                     distances[i] = distances[i - 1] + math.length(pos1 - pos0);
                     pos0 = pos1;
@@ -189,9 +189,9 @@ namespace BezierCurveDemo
                 float radiansOffset = AngleBetween(framesAtTimeSteps[0].normal, framesAtTimeSteps[framesAtTimeSteps.Length - 1].normal);
                 for (int i = 1; i < framesAtTimeSteps.Length; i++)
                 {
-                    float pathTime = (float)i / (framesAtTimeSteps.Length - 1);
+                    float curveTime = (float)i / (framesAtTimeSteps.Length - 1);
                     Frame frame = framesAtTimeSteps[i];
-                    float radians = math.lerp(0, radiansOffset, pathTime);
+                    float radians = math.lerp(0, radiansOffset, curveTime);
                     quaternion rotation = quaternion.AxisAngle(frame.tangent, radians);
                     frame.normal = math.mul(rotation, frame.normal);
                     framesAtTimeSteps[i] = frame;

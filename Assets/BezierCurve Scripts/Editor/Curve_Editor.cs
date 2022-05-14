@@ -6,9 +6,9 @@ using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 using Unity.Mathematics;
 
-namespace BezierCurveDemo
+namespace BezierCurve
 {
-    public partial class Path
+    public partial class Curve
     {
         [SerializeField] Color handleLineColor = Color.white;
         [SerializeField] Color curveColor = Color.green;
@@ -46,14 +46,14 @@ namespace BezierCurveDemo
             }
         }
 
-        [CustomEditor(typeof(Path))]
-        public class Path_Editor : Editor
+        [CustomEditor(typeof(Curve))]
+        public class Curve_Editor : Editor
         {
-            Path path;
+            Curve curve;
 
             private void OnEnable()
             {
-                path = target as Path;
+                curve = target as Curve;
             }
 
             public override VisualElement CreateInspectorGUI()
@@ -71,14 +71,14 @@ namespace BezierCurveDemo
 
                 var resetButton = new Button(() =>
                 {
-                    PerformStructuralChange("Reset path", path.Reset);
+                    PerformStructuralChange("Reset curve", curve.Reset);
                 });
-                resetButton.text = "Reset path";
+                resetButton.text = "Reset curve";
                 root.Add(resetButton);
 
                 var autoSetHandlesButton = new Button(() =>
                 {
-                    PerformStructuralChange("Auto set handles", path.AutoSetHandles);
+                    PerformStructuralChange("Auto set handles", curve.AutoSetHandles);
                 });
                 autoSetHandlesButton.text = "Auto Set Handles";
                 root.Add(autoSetHandlesButton);
@@ -108,25 +108,25 @@ namespace BezierCurveDemo
 
                 void InitCache(EventBase evt)
                 {
-                    path.InitCache();
+                    curve.InitCache();
                 }
             }
 
             void OnSceneGUI()
             {
-                for (int i = 0; i < path.AnchorCount; i++)
+                for (int i = 0; i < curve.AnchorCount; i++)
                 {
-                    var anchor = path[i];
+                    var anchor = curve[i];
                     DrawHandleLines(anchor);
-                    if (path.drawFramesInCache) { DrawFrames(); }
+                    if (curve.drawFramesInCache) { DrawFrames(); }
                     DrawLerpedFrames();
                     if (DrawAndEditAnchor(ref anchor) ||
                         DrawAndEditBackHandle(ref anchor) ||
                         DrawAndEditFrontHandle(ref anchor))
                     {
-                        Undo.RecordObject(target, $"Edit path anchor");
-                        path[i] = anchor;
-                        path.InitCache();
+                        Undo.RecordObject(target, $"Edit curve anchor");
+                        curve[i] = anchor;
+                        curve.InitCache();
                     }
                     CheckForAndPerformAnchorDelete();
                     CheckForAndPerformAnchorAdd();
@@ -137,7 +137,7 @@ namespace BezierCurveDemo
             {
                 Undo.RecordObject(target, actionDescription);
                 action();
-                path.InitCache();
+                curve.InitCache();
                 SceneView.RepaintAll();
             }
 
@@ -145,22 +145,22 @@ namespace BezierCurveDemo
             {
                 Undo.RecordObject(target, actionDescription);
                 action(value);
-                path.InitCache();
+                curve.InitCache();
                 SceneView.RepaintAll();
             }
 
-            void DrawHandleLines(Path.Anchor anchor)
+            void DrawHandleLines(Curve.Anchor anchor)
             {
-                Handles.color = path.handleLineColor;
+                Handles.color = curve.handleLineColor;
                 Handles.DrawLine(anchor.Position, anchor.BackHandle);
                 Handles.DrawLine(anchor.Position, anchor.FrontHandle);
             }
 
             bool DrawAndEditAnchor(ref Anchor anchor)
             {
-                Handles.color = path.anchorColor;
+                Handles.color = curve.anchorColor;
                 float worldSize = HandleUtility.GetHandleSize(anchor.Position);
-                float3 pos = Handles.FreeMoveHandle(anchor.Position, Quaternion.identity, worldSize * path.anchorSize, Vector3.zero, Handles.SphereHandleCap);
+                float3 pos = Handles.FreeMoveHandle(anchor.Position, Quaternion.identity, worldSize * curve.anchorSize, Vector3.zero, Handles.SphereHandleCap);
                 if (!anchor.Position.Equals(pos))
                 {
                     anchor.Position = pos;
@@ -171,9 +171,9 @@ namespace BezierCurveDemo
 
             bool DrawAndEditBackHandle(ref Anchor anchor)
             {
-                Handles.color = path.handleColor;
+                Handles.color = curve.handleColor;
                 float worldSize = HandleUtility.GetHandleSize(anchor.BackHandle);
-                float3 pos = Handles.FreeMoveHandle(anchor.BackHandle, Quaternion.identity, worldSize * path.handleSize, Vector3.zero, Handles.SphereHandleCap);
+                float3 pos = Handles.FreeMoveHandle(anchor.BackHandle, Quaternion.identity, worldSize * curve.handleSize, Vector3.zero, Handles.SphereHandleCap);
                 if (!anchor.BackHandle.Equals(pos))
                 {
                     anchor.BackHandle = pos;
@@ -184,9 +184,9 @@ namespace BezierCurveDemo
 
             bool DrawAndEditFrontHandle(ref Anchor anchor)
             {
-                Handles.color = path.handleColor;
+                Handles.color = curve.handleColor;
                 float worldSize = HandleUtility.GetHandleSize(anchor.FrontHandle);
-                float3 pos = Handles.FreeMoveHandle(anchor.FrontHandle, Quaternion.identity, worldSize * path.handleSize, Vector3.zero, Handles.SphereHandleCap);
+                float3 pos = Handles.FreeMoveHandle(anchor.FrontHandle, Quaternion.identity, worldSize * curve.handleSize, Vector3.zero, Handles.SphereHandleCap);
                 if (!anchor.FrontHandle.Equals(pos))
                 {
                     anchor.FrontHandle = pos;
@@ -197,26 +197,26 @@ namespace BezierCurveDemo
 
             void DrawFrames()
             {
-                for (int i = 0; i < path.Cache.FrameCount; i++)
+                for (int i = 0; i < curve.Cache.FrameCount; i++)
                 {
-                    DrawFrame(path.Cache.GetFrameAtIndex(i));
+                    DrawFrame(curve.Cache.GetFrameAtIndex(i));
                 }
             }
 
             void DrawLerpedFrames()
             {
-                for (int i = 0; i < path.lerpFrameCount; i++)
+                for (int i = 0; i < curve.lerpFrameCount; i++)
                 {
-                    float t = (float)i / (path.lerpFrameCount - 1);
-                    DrawFrame(path.Cache.GetFrameAtTime(t));
+                    float t = (float)i / (curve.lerpFrameCount - 1);
+                    DrawFrame(curve.Cache.GetFrameAtTime(t));
                 }
             }
 
             void DrawFrame(Frame frame)
             {
-                Handles.color = path.tangentColor;
+                Handles.color = curve.tangentColor;
                 Handles.DrawLine(frame.position, frame.position + frame.tangent);
-                Handles.color = path.normalColor;
+                Handles.color = curve.normalColor;
                 Handles.DrawLine(frame.position, frame.position + frame.normal);
             }
 
@@ -225,16 +225,16 @@ namespace BezierCurveDemo
                 Event guiEvent = Event.current;
                 if (guiEvent.control && !guiEvent.shift)
                 {
-                    Handles.color = path.anchorHighlightColor;
+                    Handles.color = curve.anchorHighlightColor;
                     Ray ray = HandleUtility.GUIPointToWorldRay(guiEvent.mousePosition);
-                    int nearestAnchorIndex = path.GetIndexOfNearestAnchor(ray);
-                    var anchor = path.anchors[nearestAnchorIndex];
+                    int nearestAnchorIndex = curve.GetIndexOfNearestAnchor(ray);
+                    var anchor = curve.anchors[nearestAnchorIndex];
                     float worldSize = HandleUtility.GetHandleSize(anchor.Position);
-                    Handles.FreeMoveHandle(anchor.Position, Quaternion.identity, worldSize * path.anchorSize, Vector3.zero, Handles.SphereHandleCap);
+                    Handles.FreeMoveHandle(anchor.Position, Quaternion.identity, worldSize * curve.anchorSize, Vector3.zero, Handles.SphereHandleCap);
                     if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0)
                     {
                         Debug.Log("clicked to delete");
-                        PerformStructuralChange("Delete anchor", nearestAnchorIndex, path.DeleteAnchor);
+                        PerformStructuralChange("Delete anchor", nearestAnchorIndex, curve.DeleteAnchor);
                     }
                     SceneView.RepaintAll();
                 }
@@ -246,11 +246,11 @@ namespace BezierCurveDemo
                 Event guiEvent = Event.current;
                 if (guiEvent.shift && !guiEvent.control)
                 {
-                    Handles.color = path.anchorHighlightColor;
+                    Handles.color = curve.anchorHighlightColor;
                     Ray ray = HandleUtility.GUIPointToWorldRay(guiEvent.mousePosition);
-                    var rayProjection = path.ProjectRay(ray);
+                    var rayProjection = curve.ProjectRay(ray);
                     float3 pos;
-                    if (rayProjection.rayDistance < path.mouseHighlightMinDistance)
+                    if (rayProjection.rayDistance < curve.mouseHighlightMinDistance)
                     {
                         pos = rayProjection.position;
                     }
@@ -259,11 +259,11 @@ namespace BezierCurveDemo
                         pos = ray.Projection(rayProjection.position);
                     }
                     float worldSize = HandleUtility.GetHandleSize(pos);
-                    Handles.FreeMoveHandle(pos, Quaternion.identity, worldSize * path.anchorSize, Vector3.zero, Handles.SphereHandleCap);
+                    Handles.FreeMoveHandle(pos, Quaternion.identity, worldSize * curve.anchorSize, Vector3.zero, Handles.SphereHandleCap);
                     if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0)
                     {
                         Debug.Log("clicked to delete");
-                        PerformStructuralChange("Add anchor", pos, path.AddAnchor);
+                        PerformStructuralChange("Add anchor", pos, curve.AddAnchor);
                     }
                     SceneView.RepaintAll();
                 }

@@ -1,6 +1,6 @@
 using Unity.Mathematics;
 
-namespace BezierCurveDemo
+namespace BezierCurve
 {
     [System.Serializable]
     public struct Ray

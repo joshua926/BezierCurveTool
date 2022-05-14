@@ -6,7 +6,7 @@ This project is a 3D Bezier Curve tool for use in Unity. Its purpose is to visua
 
 ## Features
 - Move anchors and handles by hand with mouse
-- Handle positions automatically react to adjustments, maintaining smooth curvature
+- Handles automatically react to adjustments, maintaining smooth curvature
 - Add and delete anchors by hand with mouse clicks and the shift/control keys
 - Read positions, tangents, and normals from the curve by time and by distance
 - Toggle closed loop status for the curve
@@ -15,4 +15,7 @@ This project is a 3D Bezier Curve tool for use in Unity. Its purpose is to visua
 - Provide simple public APIs for other Unity scripts to access curve features
 
 ## Setup and Installation
-You can clone the repo for this project using the url https://github.com/joshua926/BezierCurve or you can download the BezierCurve.unitypackage in the root directory of the same repo.
+You can clone the repo for this project using the url https://github.com/joshua926/BezierCurve or you can download the BezierCurve.unitypackage in the root directory of the repo and add it to your Unity Project. If you add the asset package to your own project, you must have a recent version of the Burst package installed.
+
+## Instructions
+Add the 

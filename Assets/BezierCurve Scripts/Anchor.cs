@@ -1,9 +1,9 @@
 using UnityEngine;
 using Unity.Mathematics;
 
-namespace BezierCurveDemo
+namespace BezierCurve
 {
-    public partial class Path
+    public partial class Curve
     {
         [System.Serializable]
         public struct Anchor
@@ -183,9 +183,9 @@ namespace BezierCurveDemo
                 handleSetting = HandleType.Aligned;
             }
 
-            public void AutoSetTangents(float3 otherAnchorPosition, bool otherAnchorIsNextInPath)
+            public void AutoSetTangents(float3 otherAnchorPosition, bool otherAnchorIsNextInCurve)
             {
-                if (otherAnchorIsNextInPath)
+                if (otherAnchorIsNextInCurve)
                 {
                     float3 tangent = (otherAnchorPosition - Position) * defaultHandleLengthMultiplier;
                     handleSetting = HandleType.Aligned;

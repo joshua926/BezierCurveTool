@@ -5,7 +5,7 @@
 
 //namespace BezierCurveDemo
 //{
-//    [CustomPropertyDrawer(typeof(Path.Anchor))]
+//    [CustomPropertyDrawer(typeof(Curve.Anchor))]
 //    public class AnchorPropertyDrawer : PropertyDrawer
 //    {
 //        const string backTangentPath = "backTangent";
@@ -63,16 +63,16 @@
 //            });
 //        }
 
-//        Path.Anchor GetAnchorFromProperty(SerializedProperty property)
+//        Curve.Anchor GetAnchorFromProperty(SerializedProperty property)
 //        {
-//            return new Path.Anchor(
+//            return new Curve.Anchor(
 //                property.FindPropertyRelative(backTangentPath).vector3Value,
 //                property.FindPropertyRelative(positionPath).vector3Value,
 //                property.FindPropertyRelative(frontTangentPath).vector3Value,
-//                (Path.Anchor.HandleType)property.FindPropertyRelative(handleSettingPath).enumValueIndex);
+//                (Curve.Anchor.HandleType)property.FindPropertyRelative(handleSettingPath).enumValueIndex);
 //        }
 
-//        void SetAnchorValuesToProperty(in Path.Anchor anchor, SerializedProperty property)
+//        void SetAnchorValuesToProperty(in Curve.Anchor anchor, SerializedProperty property)
 //        {
 //            property.FindPropertyRelative(backTangentPath).vector3Value = anchor.BackTangent;
 //            property.FindPropertyRelative(positionPath).vector3Value = anchor.Position;

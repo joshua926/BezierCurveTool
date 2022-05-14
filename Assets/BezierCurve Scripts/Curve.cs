@@ -4,13 +4,13 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Burst;
 
-namespace BezierCurveDemo
+namespace BezierCurve
 {
     /// <summary>
     /// A collection of Bezier segments. Be sure to re-initialize the cache whenever you edit segments.
     /// </summary>
     [System.Serializable]    
-    public partial class Path : MonoBehaviour
+    public partial class Curve : MonoBehaviour
     {
         [SerializeField] bool isLoop;
         [SerializeField, Min(8)] int cacheFramesPerSegment;
@@ -44,7 +44,7 @@ namespace BezierCurveDemo
             set => anchors[i] = value; // todo make sure anchors with same position don't cause problems
         }
 
-        public Path()
+        public Curve()
         {
             Reset();
         }
@@ -82,9 +82,9 @@ namespace BezierCurveDemo
             return new Segment(a0.Position, a0.FrontHandle, a1.BackHandle, a1.Position);
         }
 
-        public (Segment segment, float segmentTime) GetSegmentAndSegmentTime(float pathTime)
+        public (Segment segment, float segmentTime) GetSegmentAndSegmentTime(float curveTime)
         {
-            var (index0, segmentTime) = GetIndexAndSegmentTime(pathTime, anchors.Length, IsLoop);
+            var (index0, segmentTime) = GetIndexAndSegmentTime(curveTime, anchors.Length, IsLoop);
             int index1 = GetIndex(index0 + 1);
             var a0 = anchors[index0];
             var a1 = anchors[index1];
@@ -178,8 +178,8 @@ namespace BezierCurveDemo
             else
             {
                 int otherIndex = i == 0 ? 1 : i - 1;
-                bool otherAnchorIsNextInPath = i == 0;
-                anchor.AutoSetTangents(anchors[otherIndex].Position, otherAnchorIsNextInPath);
+                bool otherAnchorIsNextInCurve = i == 0;
+                anchor.AutoSetTangents(anchors[otherIndex].Position, otherAnchorIsNextInCurve);
             }
             anchors[i] = anchor;
         }
@@ -187,9 +187,9 @@ namespace BezierCurveDemo
         public static (Segment segment, float segmentTime) GetSegmentAndSegmentTime(
             in NativeArray<Anchor> anchors,
             bool isLoop,
-            float pathTime)
+            float curveTime)
         {
-            (int index0, float segmentTime) = GetIndexAndSegmentTime(pathTime, anchors.Length, isLoop);
+            (int index0, float segmentTime) = GetIndexAndSegmentTime(curveTime, anchors.Length, isLoop);
             int index1 = GetIndex(index0 + 1, anchors.Length, isLoop);
             var a0 = anchors[index0];
             var a1 = anchors[index1];
@@ -235,11 +235,11 @@ namespace BezierCurveDemo
             }
         }
 
-        static (int index, float segmentTime) GetIndexAndSegmentTime(float pathTime, int dataLength, bool isLoop)
+        static (int index, float segmentTime) GetIndexAndSegmentTime(float curveTime, int dataLength, bool isLoop)
         {
-            pathTime = isLoop ? pathTime % 1 : math.clamp(pathTime, 0, 1);
+            curveTime = isLoop ? curveTime % 1 : math.clamp(curveTime, 0, 1);
             int finalIndex = isLoop ? dataLength : dataLength - 1; // the first and final anchors are not the same even if isLoop
-            float indexValue = pathTime * finalIndex;
+            float indexValue = curveTime * finalIndex;
             int index = (int)math.floor(indexValue);
             float segmentTime = indexValue - index;
             return (index, segmentTime);

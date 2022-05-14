@@ -1,8 +1,8 @@
 using Unity.Mathematics;
 
-namespace BezierCurveDemo
+namespace BezierCurve
 {
-    public partial class Path
+    public partial class Curve
     {
         public struct Frame
         {

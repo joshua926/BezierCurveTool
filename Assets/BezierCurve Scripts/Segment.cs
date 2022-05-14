@@ -1,8 +1,8 @@
 using Unity.Mathematics;
 
-namespace BezierCurveDemo
+namespace BezierCurve
 {
-    public partial class Path
+    public partial class Curve
     {
         public readonly struct Segment
         {
@@ -58,7 +58,7 @@ namespace BezierCurveDemo
                 return e - d;
             }
 
-            public (float3 position, float rayDistance, float pathTime) ProjectRay(in Ray ray, int iterations)
+            public (float3 position, float rayDistance, float curveTime) ProjectRay(in Ray ray, int iterations)
             {
                 (float5 times, float5 distances) = GetInitialTimesAndDistances(ray);
                 int i = 0;
@@ -70,8 +70,8 @@ namespace BezierCurveDemo
                 } while (i < iterations);
                 int indexOfMinDistance = GetIndexOfMinDistance(distances);
                 float rayDistance = math.sqrt(distances[indexOfMinDistance]);
-                float pathTime = times[indexOfMinDistance];
-                return (Position(pathTime), rayDistance, pathTime);
+                float curveTime = times[indexOfMinDistance];
+                return (Position(curveTime), rayDistance, curveTime);
             }
 
             (float5 times, float5 distances) GetInitialTimesAndDistances(in Ray ray)
