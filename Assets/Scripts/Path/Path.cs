@@ -6,14 +6,17 @@ using Unity.Burst;
 
 namespace BezierCurveDemo
 {
-    [System.Serializable]
-    public partial class Path
+    /// <summary>
+    /// A collection of Bezier segments. Be sure to re-initialize the cache whenever you edit segments.
+    /// </summary>
+    [System.Serializable]    
+    public partial class Path : MonoBehaviour
     {
         [SerializeField] bool isLoop;
-        [SerializeField, Min(1)] int cacheFramesPerSegment;
+        [SerializeField, Min(8)] int cacheFramesPerSegment;
         [SerializeField] Anchor[] anchors;
         FrameCache cache;
-        const float defaultHandleLengthMultiplier = .3f;
+        const float defaultHandleLengthMultiplier = .4f;
         public int AnchorCount => anchors.Length;
         public int SegmentCount => isLoop ? anchors.Length : anchors.Length - 1;
         public bool IsLoop => isLoop;
@@ -38,12 +41,7 @@ namespace BezierCurveDemo
         public Anchor this[int i]
         {
             get => anchors[i];
-            set
-            {
-                //value = ValidateAnchor(value, i); // todo try to not need this
-                anchors[i] = value;
-                InitCache();
-            }
+            set => anchors[i] = value; // todo make sure anchors with same position don't cause problems
         }
 
         public Path()
@@ -156,6 +154,34 @@ namespace BezierCurveDemo
                 }
             }
             return nearestSegment.ProjectRay(ray, refineCount);
+        }
+
+        public void AutoSetHandles()
+        {
+            for (int i = 0; i < anchors.Length; i++)
+            {
+                AutoSetHandles(i);
+            }
+        }
+
+        public void AutoSetHandles(int i)
+        {
+            if (anchors.Length <= 2) { return; }
+            var anchor = anchors[i];
+            bool twoNeighbors = IsLoop || (i > 0 && i < anchors.Length - 1);            
+            if (twoNeighbors)
+            {
+                var prior = anchors[GetIndex(i - 1)];
+                var next = anchors[GetIndex(i + 1)];                
+                anchor.AutoSetTangents(prior.Position, next.Position);
+            }
+            else
+            {
+                int otherIndex = i == 0 ? 1 : i - 1;
+                bool otherAnchorIsNextInPath = i == 0;
+                anchor.AutoSetTangents(anchors[otherIndex].Position, otherAnchorIsNextInPath);
+            }
+            anchors[i] = anchor;
         }
 
         public static (Segment segment, float segmentTime) GetSegmentAndSegmentTime(

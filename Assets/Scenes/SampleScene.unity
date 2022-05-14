@@ -148,7 +148,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 398007003}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.16, y: 0, z: 4.45}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -164,29 +164,33 @@ MonoBehaviour:
   m_GameObject: {fileID: 398007003}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b52224f3fa330d347909b70ca54acb55, type: 3}
+  m_Script: {fileID: 11500000, guid: 5fd5cff9e8db7134c9af3ba5908594b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path:
-    isLoop: 1
-    cacheFramesPerSegment: 8
-    anchors:
-    - backTangent: {x: -9.63, y: -6.56, z: 0}
-      position: {x: -3.32, y: 0.06, z: 0}
-      frontTangent: {x: 3.0858657, y: 2.1021059, z: -0}
-      handleSetting: 0
-    - backTangent: {x: 3.87, y: -3.77, z: 0}
-      position: {x: -0.66, y: 4.71, z: 0}
-      frontTangent: {x: -0.8008501, y: 0.7801563, z: -0}
-      handleSetting: 0
-    - backTangent: {x: 2.42, y: 3.160011, z: 0}
-      position: {x: 3.97, y: 0.13, z: 0}
-      frontTangent: {x: -0.6797776, y: -0.88764656, z: -0}
-      handleSetting: 0
-    - backTangent: {x: -1.96, y: -2, z: 0}
-      position: {x: 0, y: 0, z: 0}
-      frontTangent: {x: 1.3998573, y: 1.4284258, z: -0}
-      handleSetting: 0
+  handleLineColor: {r: 1, g: 1, b: 1, a: 1}
+  curveColor: {r: 0, g: 1, b: 0, a: 1}
+  anchorColor: {r: 0, g: 0, b: 0, a: 1}
+  anchorHighlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  handleColor: {r: 1, g: 1, b: 1, a: 1}
+  tangentColor: {r: 0, g: 0, b: 1, a: 1}
+  normalColor: {r: 0, g: 1, b: 0, a: 1}
+  anchorSize: 0.1
+  handleSize: 0.1
+  lineCountPerSegment: 32
+  drawFramesInCache: 0
+  lerpFrameCount: 0
+  mouseHighlightMinDistance: 0.1
+  isLoop: 0
+  cacheFramesPerSegment: 8
+  anchors:
+  - backTangent: {x: 0, y: -2, z: 0}
+    position: {x: 0, y: 0, z: 0}
+    frontTangent: {x: -0, y: 2, z: -0}
+    handleSetting: 0
+  - backTangent: {x: -0.5, y: 1, z: 0}
+    position: {x: 1.5, y: 2, z: 0}
+    frontTangent: {x: 0.5, y: -1, z: -0}
+    handleSetting: 0
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

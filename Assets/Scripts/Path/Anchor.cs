@@ -163,6 +163,43 @@ namespace BezierCurveDemo
             {
                 AlignFrontTangent();
             }
+
+            public void AutoSetTangents(float3 priorAnchorPosition, float3 nextAnchorPosition)
+            {
+                if(position.Equals(priorAnchorPosition) || position.Equals(nextAnchorPosition))
+                {
+                    position += (Vector3)new float3(.01f);
+                }
+                if (priorAnchorPosition.Equals(nextAnchorPosition))
+                {
+                    priorAnchorPosition += new float3(.01f);
+                }
+                float3 priorOffset = priorAnchorPosition - Position;
+                float3 nextOffset = nextAnchorPosition - Position;
+                float priorDistance = math.length(priorOffset);
+                float nextDistance = math.length(nextOffset);
+                backTangent = math.normalize(priorOffset / priorDistance - nextOffset / nextDistance) * priorDistance * defaultHandleLengthMultiplier;
+                frontTangent = math.normalize(nextOffset / nextDistance - priorOffset / priorDistance) * nextDistance * defaultHandleLengthMultiplier;
+                handleSetting = HandleType.Aligned;
+            }
+
+            public void AutoSetTangents(float3 otherAnchorPosition, bool otherAnchorIsNextInPath)
+            {
+                if (otherAnchorIsNextInPath)
+                {
+                    float3 tangent = (otherAnchorPosition - Position) * defaultHandleLengthMultiplier;
+                    handleSetting = HandleType.Aligned;
+                    backTangent = -tangent;
+                    frontTangent = tangent;
+                }
+                else
+                {
+                    float3 tangent = (otherAnchorPosition - Position) * defaultHandleLengthMultiplier;
+                    handleSetting = HandleType.Aligned;
+                    frontTangent = -tangent;
+                    backTangent = tangent;
+                }
+            }
         }
     }
 }

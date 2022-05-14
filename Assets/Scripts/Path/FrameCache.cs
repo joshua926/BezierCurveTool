@@ -116,7 +116,10 @@ namespace BezierCurveDemo
                         frame = new Frame(frame, segment, segmentTime);
                         framesAtTimeSteps[i] = frame;
                     }
-                    //LineUpNormals(ref frames);
+                    if (isLoop)
+                    {
+                        LineUpNormals(ref framesAtTimeSteps);
+                    }
                 }
             }
 
