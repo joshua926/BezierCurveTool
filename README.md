@@ -15,7 +15,17 @@ This project is a 3D Bezier Curve tool for use in Unity. Its purpose is to visua
 - Provide simple public APIs for other Unity scripts to access curve features
 
 ## Setup and Installation
-You can clone the repo for this project using the url https://github.com/joshua926/BezierCurve or you can download the BezierCurve.unitypackage in the root directory of the repo and add it to your Unity Project. If you add the asset package to your own project, you must have a recent version of the Burst package installed.
+You can clone the repo for this project using the url https://github.com/joshua926/BezierCurveTool or you can download the BezierCurveTool.unitypackage in the root directory of the repo and add it to your Unity Project. If you add the asset package to your own project, you must have a recent version of the Burst package installed.
 
 ## Instructions
-Add the 
+- Add the Curve script to a GameObject to see a curve rendered in the scene view.
+- Click and drag with the mouse on any anchors or handles along the curve to move them.
+- Control click on an anchor to delete it.
+- Shift click a position on the curve to insert an anchor.
+- Shift click nearby the curve to add an anchor to the end.
+- In the inspector, set the 'Cache Frames Per Segment' field to increase or decrease the accuracy of cached frames.
+- In the inspector, you can toggle the 'Preview Settings' foldout to alter how the curve is rendered in the scene view. This has no impact in builds.
+- You can reference the curve in other scripts. There are several public methods you can call to add and delete anchors, move anchors, move handles, and get positions, tangents, and normals at points along the curve.
+
+## Design
+There are several code objects the Curve MonoBehaviour class depends on internally. The Anchor struct represents an anchor and its handles in the curve along with logic related to setting and aligning handles. The Curve class itself contains an array of Anchors. The Segment struct is another representation of the points that make up the curve. It is used to handle the fundamental Bezier math involved in calculating positions, tangents, accelerations, etc. The Frame struct represents a reference frame along the curve that includes its position, tangent (forward), and normal (up). The Cache class is an abstraction to isolate all logic involved in calculating and interpolating between frames.
