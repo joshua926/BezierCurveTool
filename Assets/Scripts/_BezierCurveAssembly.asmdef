@@ -12,19 +12,13 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [
-        "HAS_BURST",
-        "HAS_MATH"
+        "HAS_BURST"
     ],
     "versionDefines": [
         {
             "name": "com.unity.burst",
-            "expression": "1.6.5",
+            "expression": "1.6",
             "define": "HAS_BURST"
-        },
-        {
-            "name": "com.unity.mathematics",
-            "expression": "1.2.6",
-            "define": "HAS_MATH"
         }
     ],
     "noEngineReferences": false
