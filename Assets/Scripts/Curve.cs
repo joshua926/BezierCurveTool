@@ -53,16 +53,8 @@ namespace BezierCurve
         {
             anchors = new Anchor[]
             {
-                new Anchor(
-                    new float3(0, -2, 0),
-                    0,
-                    new float3(0, 2, 0),
-                    Anchor.HandleType.Aligned),
-                new Anchor(
-                    new float3(-.5f, 1, 0),
-                    new float3(1.5f, 2, 0),
-                    new float3(.5f, -1f, 0),
-                    Anchor.HandleType.Aligned),
+                new Anchor(new float3(0, 0, 0), new float3(0, 2, 0)),
+                new Anchor(new float3(1.5f, 2, 0), new float3(.5f, -1f, 0)),
             };
             isLoop = false;
             cacheFramesPerSegment = 8;
@@ -70,7 +62,7 @@ namespace BezierCurve
 
         public void InitCache()
         {
-            cache = new FrameCache(anchors, IsLoop, cacheFramesPerSegment * 2, cacheFramesPerSegment);
+            //cache = new FrameCache(anchors, IsLoop, cacheFramesPerSegment * 2, cacheFramesPerSegment);
             Debug.Log("cache initialized");
         }
 
@@ -96,7 +88,7 @@ namespace BezierCurve
             if (isLoop) { return; }
             Anchor lastAnchor = anchors[anchors.Length - 1];
             float3 offset = (position - lastAnchor.FrontHandle) * defaultHandleLengthMultiplier;
-            var anchor = new Anchor(-offset, position, offset, Anchor.HandleType.Aligned);
+            var anchor = new Anchor(position, offset);
             ArrayUtility.Add(ref anchors, anchor);
         }
 
@@ -110,11 +102,7 @@ namespace BezierCurve
             float p2Distance = math.distance(p2.Position, position);
             float3 p0Direction = (p0.Position - position) / p0Distance;
             float3 p2Direction = (p2.Position - position) / p2Distance;
-            var anchor = new Anchor(
-                math.normalize(p0Direction - p2Direction) * p0Distance * defaultHandleLengthMultiplier,
-                position,
-                math.normalize(p2Direction - p0Direction) * p2Distance * defaultHandleLengthMultiplier,
-                Anchor.HandleType.Aligned);
+            var anchor = new Anchor(position, math.normalize(p2Direction - p0Direction) * p2Distance * defaultHandleLengthMultiplier);
             ArrayUtility.Insert(ref anchors, anchor, p0Index + 1);
         }
 
@@ -139,9 +127,9 @@ namespace BezierCurve
             return indexOfNearest;
         }
 
-        public (float3 position, float rayDistance, float time) ProjectRay(in Ray ray, int refineCount = 10)
+        public (float3 position, float rayDistance, float curveTime) ProjectRay(in Ray ray, int refineCount = 10)
         {
-            Segment nearestSegment = default;
+            int index = 0;
             float distanceMin = float.PositiveInfinity;
             for (int i = 0; i < SegmentCount; i++)
             {
@@ -150,10 +138,14 @@ namespace BezierCurve
                 if (projection.rayDistance < distanceMin)
                 {
                     distanceMin = projection.rayDistance;
-                    nearestSegment = segment;
+                    index = i;
                 }
             }
-            return nearestSegment.ProjectRay(ray, refineCount);
+            var p = GetSegmentAtIndex(index).ProjectRay(ray, refineCount);
+            float segmentTimeRange = 1f / SegmentCount;
+            float curveTimeFloor = (float)index / SegmentCount;
+            float curveTime = curveTimeFloor + segmentTimeRange * p.segmentTime;
+            return (p.position, p.rayDistance, curveTime);
         }
 
         public void AutoSetHandles()
@@ -179,7 +171,7 @@ namespace BezierCurve
             {
                 int otherIndex = i == 0 ? 1 : i - 1;
                 bool otherAnchorIsNextInCurve = i == 0;
-                anchor.AutoSetTangents(anchors[otherIndex].Position, otherAnchorIsNextInCurve);
+                anchor.AutoSetTangentsForEndAnchor(anchors[otherIndex].Position, otherAnchorIsNextInCurve);
             }
             anchors[i] = anchor;
         }

@@ -170,14 +170,14 @@ MonoBehaviour:
   isLoop: 0
   cacheFramesPerSegment: 8
   anchors:
-  - backTangent: {x: 0, y: -2, z: 0}
-    position: {x: 0, y: 0, z: 0}
-    frontTangent: {x: -0, y: 2, z: -0}
-    handleSetting: 0
-  - backTangent: {x: -0.5, y: 1, z: 0}
-    position: {x: 3.7154562, y: 2.3200846, z: 0.3444705}
-    frontTangent: {x: 0.5, y: -1, z: -0}
-    handleSetting: 0
+  - position: {x: 0, y: 0, z: 0}
+    frontTangentNormalized: {x: 0, y: 1, z: 0}
+    frontLength: 2
+    backLength: 2
+  - position: {x: 1.5, y: 2, z: 0}
+    frontTangentNormalized: {x: 0.4472136, y: -0.8944272, z: 0}
+    frontLength: 1.118034
+    backLength: 1.118034
   handleLineColor: {r: 1, g: 1, b: 1, a: 1}
   curveColor: {r: 0, g: 1, b: 0, a: 1}
   anchorColor: {r: 0, g: 0, b: 0, a: 1}

@@ -8,165 +8,74 @@ namespace BezierCurve
         [System.Serializable]
         public struct Anchor
         {
-            [SerializeField] Vector3 backTangent;
             [SerializeField] Vector3 position;
-            [SerializeField] Vector3 frontTangent;
-            [SerializeField] HandleType handleSetting;
-
-            public enum HandleType { Aligned = 0, Free = 1 };
-
-            public HandleType HandleSetting
-            {
-                get => handleSetting;
-                set
-                {
-                    if (value == HandleType.Aligned)
-                    {
-                        AlignTangents();
-                    }
-                    handleSetting = value;
-                }
-            }
-
-            public bool ShouldAlign => HandleSetting == HandleType.Aligned;
+            [SerializeField] Vector3 frontTangentNormalized;
+            [SerializeField] float frontLength;
+            [SerializeField] float backLength;
 
             public float3 Position
             {
                 get => position;
                 set => position = value;
             }
+            public float FrontTangentLength
+            {
+                get => frontLength;
+                set => frontLength = value;
+            }
+
+            public float BackTangentLength
+            {
+                get => backLength;
+                set => backLength = value;
+            }
 
             public float3 BackTangent
             {
-                get => backTangent;
+                get => -frontTangentNormalized * backLength;
                 set
                 {
-                    backTangent = value;
-                    if (handleSetting == HandleType.Aligned)
-                    {
-                        AlignFrontTangent();
-                    }
+                    backLength = math.length(value);
+                    frontTangentNormalized = -(value / backLength);
                 }
             }
 
             public float3 FrontTangent
             {
-                get => frontTangent;
+                get => frontTangentNormalized * frontLength;
                 set
                 {
-                    frontTangent = value;
-                    if (handleSetting == HandleType.Aligned)
-                    {
-                        AlignBackTangent();
-                    }
+                    frontLength = math.length(value);
+                    frontTangentNormalized = value / frontLength;
                 }
             }
+
+            public float3 BackTangentNormalized => -frontTangentNormalized;
+            public float3 FrontTangentNormalized => frontTangentNormalized;
 
             public float3 BackHandle
             {
-                get => Position + BackTangent;
-                set => BackTangent = value - Position;
+                get => position - frontTangentNormalized * backLength;
+                set => BackTangent = value - Position;                
             }
-
             public float3 FrontHandle
             {
-                get => Position + FrontTangent;
+                get => position + frontTangentNormalized * frontLength;
                 set => FrontTangent = value - Position;
             }
 
-            public float FrontTangentLength
-            {
-                get => math.length(frontTangent);
-                set => frontTangent = math.normalize(frontTangent) * value;
-            }
 
-            public float BackTangentLength
+            public Anchor(float3 position, float3 frontTangent)
             {
-                get => math.length(backTangent);
-                set => backTangent = math.normalize(backTangent) * value;
-            }
-
-            public Anchor(float3 backTangent, float3 position, float3 frontTangent, HandleType handleSetting)
-            {
-                this.backTangent = backTangent;
                 this.position = position;
-                this.frontTangent = frontTangent;
-                this.handleSetting = handleSetting;
-                if (handleSetting == HandleType.Aligned)
-                {
-                    AlignFrontTangent();
-                }
-            }
-
-            public float3 GetHandle(int i)
-            {
-                return i == 0 ? BackHandle : FrontHandle;
-            }
-
-            public void SetHandle(int i, float3 value)
-            {
-                if (i == 0)
-                {
-                    BackHandle = value;
-                }
-                else
-                {
-                    FrontHandle = value;
-                }
-            }
-
-            public float3 GetTangent(int i)
-            {
-                return i == 0 ? BackTangent : FrontTangent;
-            }
-
-            public void SetTangent(int i, float3 value)
-            {
-                if (i == 0)
-                {
-                    BackTangent = value;
-                }
-                else
-                {
-                    FrontTangent = value;
-                }
-            }
-
-            public float GetTangentLength(int i)
-            {
-                return i == 0 ? BackTangentLength : FrontTangentLength;
-            }
-
-            public void SetTangentLength(int i, float value)
-            {
-                if (i == 0)
-                {
-                    BackTangentLength = value;
-                }
-                else
-                {
-                    FrontTangentLength = value;
-                }
-            }
-
-            public void AlignBackTangent()
-            {
-                backTangent = math.normalize(-frontTangent) * math.length(backTangent);
-            }
-
-            public void AlignFrontTangent()
-            {
-                frontTangent = math.normalize(-backTangent) * math.length(frontTangent);
-            }
-
-            public void AlignTangents()
-            {
-                AlignFrontTangent();
+                frontLength = math.length(frontTangent);
+                this.frontTangentNormalized = frontTangent / frontLength;
+                this.backLength = frontLength;
             }
 
             public void AutoSetTangents(float3 priorAnchorPosition, float3 nextAnchorPosition)
             {
-                if(position.Equals(priorAnchorPosition) || position.Equals(nextAnchorPosition))
+                if (position.Equals(priorAnchorPosition) || position.Equals(nextAnchorPosition))
                 {
                     position += (Vector3)new float3(.01f);
                 }
@@ -178,27 +87,20 @@ namespace BezierCurve
                 float3 nextOffset = nextAnchorPosition - Position;
                 float priorDistance = math.length(priorOffset);
                 float nextDistance = math.length(nextOffset);
-                backTangent = math.normalize(priorOffset / priorDistance - nextOffset / nextDistance) * priorDistance * defaultHandleLengthMultiplier;
-                frontTangent = math.normalize(nextOffset / nextDistance - priorOffset / priorDistance) * nextDistance * defaultHandleLengthMultiplier;
-                handleSetting = HandleType.Aligned;
+                frontTangentNormalized = math.normalize(nextOffset / nextDistance - priorOffset / priorDistance);
+                frontLength = nextDistance * defaultHandleLengthMultiplier;
+                backLength = priorDistance * defaultHandleLengthMultiplier;
             }
 
-            public void AutoSetTangents(float3 otherAnchorPosition, bool otherAnchorIsNextInCurve)
+            public void AutoSetTangentsForEndAnchor(float3 otherAnchorPosition, bool thisAnchorIsTheFirst)
             {
-                if (otherAnchorIsNextInCurve)
-                {
-                    float3 tangent = (otherAnchorPosition - Position) * defaultHandleLengthMultiplier;
-                    handleSetting = HandleType.Aligned;
-                    backTangent = -tangent;
-                    frontTangent = tangent;
-                }
-                else
-                {
-                    float3 tangent = (otherAnchorPosition - Position) * defaultHandleLengthMultiplier;
-                    handleSetting = HandleType.Aligned;
-                    frontTangent = -tangent;
-                    backTangent = tangent;
-                }
+                float3 offset = otherAnchorPosition - Position;
+                float length = math.length(offset);
+                float3 tangent = offset / length;
+                int multiplier = thisAnchorIsTheFirst ? 1 : -1;
+                frontTangentNormalized = tangent * multiplier;
+                backLength = length * defaultHandleLengthMultiplier;
+                frontLength = length * defaultHandleLengthMultiplier;
             }
         }
     }

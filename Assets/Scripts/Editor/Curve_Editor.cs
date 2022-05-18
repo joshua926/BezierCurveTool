@@ -128,8 +128,8 @@ namespace BezierCurve
                         curve[i] = anchor;
                         curve.InitCache();
                     }
-                    CheckForAndPerformAnchorDelete();
-                    CheckForAndPerformAnchorAdd();
+                    CheckForDelete();
+                    CheckForAdd();
                 }
             }
 
@@ -220,7 +220,7 @@ namespace BezierCurve
                 Handles.DrawLine(frame.position, frame.position + frame.normal);
             }
 
-            void CheckForAndPerformAnchorDelete()
+            void CheckForDelete()
             {
                 Event guiEvent = Event.current;
                 if (guiEvent.control && !guiEvent.shift)
@@ -240,8 +240,7 @@ namespace BezierCurve
                 }
             }
 
-            // todo fix this
-            void CheckForAndPerformAnchorAdd()
+            void CheckForAdd()
             {
                 Event guiEvent = Event.current;
                 if (guiEvent.shift && !guiEvent.control)
@@ -249,6 +248,7 @@ namespace BezierCurve
                     Handles.color = curve.anchorHighlightColor;
                     Ray ray = HandleUtility.GUIPointToWorldRay(guiEvent.mousePosition);
                     var rayProjection = curve.ProjectRay(ray);
+                    Debug.Log($"pos {rayProjection.position}, time {rayProjection.curveTime}, distance {rayProjection.rayDistance}");
                     float3 pos;
                     if (rayProjection.rayDistance < curve.mouseHighlightMinDistance)
                     {
@@ -262,8 +262,8 @@ namespace BezierCurve
                     Handles.FreeMoveHandle(pos, Quaternion.identity, worldSize * curve.anchorSize, Vector3.zero, Handles.SphereHandleCap);
                     if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0)
                     {
-                        Debug.Log("clicked to delete");
-                        PerformStructuralChange("Add anchor", pos, curve.AddAnchor);
+                        Debug.Log($"clicked to add {pos}");
+                        //PerformStructuralChange("Add anchor", pos, curve.AddAnchor);
                     }
                     SceneView.RepaintAll();
                 }

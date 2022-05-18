@@ -1,4 +1,5 @@
 using Unity.Mathematics;
+using Unity.Collections;
 
 namespace BezierCurve
 {
@@ -58,23 +59,22 @@ namespace BezierCurve
                 return e - d;
             }
 
-            public (float3 position, float rayDistance, float curveTime) ProjectRay(in Ray ray, int iterations)
+            public (float3 position, float rayDistance, float segmentTime) ProjectRay(in Ray ray, int iterations)
             {
-                (float5 times, float5 distances) = GetInitialTimesAndDistances(ray);
-                int i = 0;
-                do
+                iterations = math.max(1, iterations);
+                (float5 times, float5 distances) = GetInitialValues(ray);
+                for (int i = 0; i < iterations; i++)
                 {
-                    CalculateInBetweenValues(ref distances, ref times, ray);
-                    ZoomIn(ref distances, ref times);
-                    i++;
-                } while (i < iterations);
+                    CalculateInBetweenValues(ref times, ref distances, ray);
+                    ZoomIn(ref times, ref distances);
+                }
                 int indexOfMinDistance = GetIndexOfMinDistance(distances);
                 float rayDistance = math.sqrt(distances[indexOfMinDistance]);
-                float curveTime = times[indexOfMinDistance];
-                return (Position(curveTime), rayDistance, curveTime);
+                float segmentTime = times[indexOfMinDistance];
+                return (Position(segmentTime), rayDistance, segmentTime);
             }
 
-            (float5 times, float5 distances) GetInitialTimesAndDistances(in Ray ray)
+            (float5 times, float5 distances) GetInitialValues(in Ray ray)
             {
                 float5 times = default;
                 times[0] = 0;
@@ -82,7 +82,7 @@ namespace BezierCurve
                 times[4] = 1;
                 float5 distances = default;
                 distances[0] = ray.Distancesq(points[0]);
-                distances[2] = ray.Distancesq(Position(times[2]));
+                distances[2] = ray.Distancesq(Position(.5f));
                 distances[4] = ray.Distancesq(points[3]);
                 return (times, distances);
             }
@@ -93,16 +93,6 @@ namespace BezierCurve
                 times[3] = (times[2] + times[4]) * .5f;
                 distances[1] = ray.Distancesq(Position(times[1]));
                 distances[3] = ray.Distancesq(Position(times[3]));
-            }
-
-            int GetIndexOfMinDistance(in float5 distances)
-            {
-                int indexOfMin = 2;
-                indexOfMin = distances[0] < distances[indexOfMin] ? 0 : indexOfMin;
-                indexOfMin = distances[1] < distances[indexOfMin] ? 0 : indexOfMin;
-                indexOfMin = distances[3] < distances[indexOfMin] ? 0 : indexOfMin;
-                indexOfMin = distances[4] < distances[indexOfMin] ? 0 : indexOfMin;
-                return indexOfMin;
             }
 
             void ZoomIn(ref float5 times, ref float5 distances)
@@ -116,22 +106,52 @@ namespace BezierCurve
                 times[2] = times[2];
             }
 
+            int GetIndexOfMinDistance(in float5 distances)
+            {
+                int indexOfMin = 2;
+                indexOfMin = distances[0] < distances[indexOfMin] ? 0 : indexOfMin;
+                indexOfMin = distances[1] < distances[indexOfMin] ? 1 : indexOfMin;
+                indexOfMin = distances[3] < distances[indexOfMin] ? 3 : indexOfMin;
+                indexOfMin = distances[4] < distances[indexOfMin] ? 4 : indexOfMin;
+                return indexOfMin;
+            }
+
             unsafe struct float5
             {
-                fixed float f[5];
+                NativeArray<float> values;
                 public float this[int i]
                 {
                     get
                     {
-                        i = math.clamp(i, 0, 4);
-                        return f[i];
+                        if (!values.IsCreated) { Init(); }
+                        return values[i];
                     }
                     set
                     {
-                        i = math.clamp(i, 0, 4);
-                        f[i] = value;
+                        if (!values.IsCreated) { Init(); }
+                        values[i] = value;
                     }
                 }
+
+                void Init()
+                {
+                    values = new NativeArray<float>(5, Allocator.Temp);
+                }
+
+                //fixed float f[5];
+                //public float this[int i]
+                //{
+                //    get
+                //    {
+                //        i = math.clamp(i, 0, 4);
+                //        return f[i];
+                //    }
+                //    set
+                //    {
+                //        i = math.clamp(i, 0, 4);
+                //        f[i] = value;
+                //    }
+                //}
             }
         }
     }
