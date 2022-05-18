@@ -29,3 +29,6 @@ You can clone the repo for this project using the url https://github.com/joshua9
 
 ## Design
 There are several code objects the Curve MonoBehaviour class depends on internally. The Anchor struct represents an anchor and its handles in the curve along with logic related to setting and aligning handles. The Curve class itself contains an array of Anchors. The Segment struct is another representation of the points that make up the curve. It is used to handle the fundamental Bezier math involved in calculating positions, tangents, accelerations, etc. The Frame struct represents a reference frame along the curve that includes its position, tangent (forward), and normal (up). The Cache class is an abstraction to isolate all logic involved in calculating and interpolating between frames.
+
+## Known Issues
+- Ray projection onto the curve is not working. This means you cannot currently add anchors to the curve with the mouse.
