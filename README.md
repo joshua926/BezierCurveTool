@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is a 3D Bezier Curve tool for use in Unity. Its purpose is to visualize and edit a Bezier curve with an arbitrary number of segments in the 3D scene view.
+This project is a 3D Bezier Curve tool for use in Unity. Its purpose is to visualize and edit a Bezier curve with an arbitrary number of segments in the 3D scene view. The main code logic is under Assets > Scripts.
 
 ## Features
 - Move anchors and handles by hand using the mouse
