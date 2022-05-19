@@ -47,9 +47,9 @@ namespace BezierCurve
                 anchors[i] = value;
                 if (autoSetHandles)
                 {
+                    AutoSetHandles(i - 1);
                     AutoSetHandles(i);
-                    if (i > 0) { AutoSetHandles(i - 1); }
-                    if (i < anchors.Length - 1) { AutoSetHandles(i + 1); }
+                    AutoSetHandles(i + 1);
                 }
             }
         }
@@ -110,8 +110,8 @@ namespace BezierCurve
             AutoSetHandles(i);
             if (autoSetHandles)
             {
-                if (i > 0) { AutoSetHandles(i - 1); }
-                if (i < anchors.Length - 1) { AutoSetHandles(i + 1); }
+                AutoSetHandles(i - 1);
+                AutoSetHandles(i + 1);
             }
         }
 
@@ -120,7 +120,7 @@ namespace BezierCurve
             ArrayUtility.RemoveAt(ref anchors, i);
             if (autoSetHandles)
             {
-                if (i > 0) { AutoSetHandles(i - 1); }
+                AutoSetHandles(i - 1);
                 AutoSetHandles(i);
             }
         }
@@ -172,7 +172,8 @@ namespace BezierCurve
 
         public void AutoSetHandles(int i)
         {
-            if (anchors.Length <= 2) { return; }
+            i = isLoop ? GetIndex(i) : i;
+            if (anchors.Length <= 2 || i < 0 || i >= anchors.Length) { return; }
             var anchor = anchors[i];
             bool twoNeighbors = IsLoop || (i > 0 && i < anchors.Length - 1);            
             if (twoNeighbors)

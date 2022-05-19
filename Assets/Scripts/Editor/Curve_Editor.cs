@@ -62,13 +62,19 @@ namespace BezierCurve
                 var root = new VisualElement();
 
                 var loopField = new PropertyField(so.FindProperty(nameof(isLoop)));
-                loopField.RegisterValueChangeCallback(InitCache);
+                loopField.RegisterValueChangeCallback((e) => 
+                {
+                    PerformStructuralChange("Toggled loop field", () => { });
+                });
                 root.Add(loopField);
 
                 var autoSetHandlesField = new PropertyField(so.FindProperty(nameof(autoSetHandles)));
                 autoSetHandlesField.RegisterValueChangeCallback((e) =>
                 {
-                    PerformStructuralChange("Auto set handles", curve.AutoSetHandles);
+                    if (e.changedProperty.boolValue)
+                    {
+                        PerformStructuralChange("Auto set handles", curve.AutoSetHandles);
+                    }
                 });
                 root.Add(autoSetHandlesField);
 
@@ -224,7 +230,6 @@ namespace BezierCurve
                     float worldSize = HandleUtility.GetHandleSize(anchor.Position);
                     if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0)
                     {
-                        Debug.Log("clicked to delete");
                         PerformStructuralChange("Delete anchor", () => { curve.DeleteAnchor(nearestAnchorIndex); });
                     }
                     Handles.FreeMoveHandle(anchor.Position, Quaternion.identity, worldSize * curve.anchorSize, Vector3.zero, Handles.SphereHandleCap);
