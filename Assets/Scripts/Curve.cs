@@ -67,13 +67,13 @@ namespace BezierCurve
                 new Anchor(new float3(1.5f, 2, 0), new float3(.5f, -1f, 0)),
             };
             isLoop = false;
+            autoSetHandles = false;
             cacheFramesPerSegment = 8;
         }
 
         public void InitCache()
         {
             cache = new FrameCache(anchors, IsLoop, cacheFramesPerSegment * 2, cacheFramesPerSegment);
-            Debug.Log("cache initialized");
         }
 
         public Segment GetSegmentAtIndex(int i)
@@ -106,7 +106,13 @@ namespace BezierCurve
             int p0Index = GetIndex((int)math.floor(time * (anchors.Length - 1)));
             var anchor = new Anchor(position, 1);
             ArrayUtility.Insert(ref anchors, anchor, p0Index + 1);
-            AutoSetHandles(p0Index + 1);
+            int i = p0Index + 1;
+            AutoSetHandles(i);
+            if (autoSetHandles)
+            {
+                if (i > 0) { AutoSetHandles(i - 1); }
+                if (i < anchors.Length - 1) { AutoSetHandles(i + 1); }
+            }
         }
 
         public void DeleteAnchor(int i)

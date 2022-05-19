@@ -118,10 +118,6 @@ namespace BezierCurve
                     var anchor = curve[i];
                     if (curve.drawNormals) { DrawNormals(); }
                     DrawLerpedNormals();
-                    if (DrawAndEditAnchor(ref anchor))
-                    {
-                        PerformStructuralChange("Edit curve anchor", () => { curve[i] = anchor; });
-                    }
                     if (!curve.autoSetHandles)
                     {
                         DrawHandleLines(anchor);
@@ -129,6 +125,10 @@ namespace BezierCurve
                         {
                             PerformStructuralChange("Edit curve handles", () => { curve[i] = anchor; });
                         }
+                    }
+                    if (DrawAndEditAnchor(ref anchor))
+                    {
+                        PerformStructuralChange("Edit curve anchor", () => { curve[i] = anchor; });
                     }
                 }
                 CheckForAdd();

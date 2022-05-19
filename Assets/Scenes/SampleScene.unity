@@ -167,28 +167,57 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fd5cff9e8db7134c9af3ba5908594b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isLoop: 0
+  isLoop: 1
+  autoSetHandles: 1
   cacheFramesPerSegment: 8
   anchors:
-  - position: {x: 0, y: 0, z: 0}
-    frontTangentNormalized: {x: 0, y: 1, z: 0}
-    frontLength: 2
-    backLength: 2
-  - position: {x: 1.5, y: 2, z: 0}
-    frontTangentNormalized: {x: 0.4472136, y: -0.8944272, z: 0}
-    frontLength: 1.118034
-    backLength: 1.118034
+  - position: {x: -0.4750713, y: -0.5300695, z: -0.6669081}
+    frontTangentNormalized: {x: 0.73954904, y: -0.5793626, z: -0.34264603}
+    frontLength: 0.7667072
+    backLength: 1.2320776
+  - position: {x: 1.3079056, y: -0.2136302, z: -1.2952864}
+    frontTangentNormalized: {x: 0.9131174, y: 0.4069741, z: -0.02426148}
+    frontLength: 0.6933065
+    backLength: 0.7667072
+  - position: {x: 2.6220605, y: 0.804531, z: -0.80482113}
+    frontTangentNormalized: {x: 0.90722054, y: 0.40520853, z: 0.1129473}
+    frontLength: 0.44910368
+    backLength: 0.6933065
+  - position: {x: 3.722083, y: 1.016538, z: -0.87959766}
+    frontTangentNormalized: {x: 0.39895943, y: 0.91446894, z: -0.06766139}
+    frontLength: 0.4886683
+    backLength: 0.44910368
+  - position: {x: 3.0788963, y: 2.0551105, z: -0.89214563}
+    frontTangentNormalized: {x: -0.8210002, y: 0.56745696, z: 0.06285873}
+    frontLength: 0.3420085
+    backLength: 0.4886683
+  - position: {x: 2.2458363, y: 2.2151637, z: -0.7851162}
+    frontTangentNormalized: {x: -0.7267443, y: 0.5361222, z: 0.42943648}
+    frontLength: 0.2845905
+    backLength: 0.3420085
+  - position: {x: 2.0474265, y: 2.7397265, z: -0.3473196}
+    frontTangentNormalized: {x: -0.73219925, y: 0.48559734, z: 0.47757667}
+    frontLength: 0.27648786
+    backLength: 0.2845905
+  - position: {x: 1.3736414, y: 2.8047953, z: -0.20744729}
+    frontTangentNormalized: {x: -0.99403477, y: -0.02350547, z: 0.10650137}
+    frontLength: 0.88629884
+    backLength: 0.27648786
+  - position: {x: -0.820022, y: 2.4932678, z: -0.18937802}
+    frontTangentNormalized: {x: -0.61299384, y: -0.78340536, z: -0.10254052}
+    frontLength: 1.2320776
+    backLength: 0.88629884
   handleLineColor: {r: 1, g: 1, b: 1, a: 1}
   curveColor: {r: 0, g: 1, b: 0, a: 1}
   anchorColor: {r: 0, g: 0, b: 0, a: 1}
   anchorHighlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   handleColor: {r: 1, g: 1, b: 1, a: 1}
-  tangentColor: {r: 0, g: 0, b: 1, a: 1}
   normalColor: {r: 0, g: 1, b: 0, a: 1}
   anchorSize: 0.1
   handleSize: 0.1
   lineCountPerSegment: 32
-  drawFramesInCache: 0
+  drawNormals: 0
+  normalsPreviewLength: 1
   lerpFrameCount: 0
 --- !u!1 &705507993
 GameObject:
