@@ -119,41 +119,21 @@ namespace BezierCurve
             }
 
             unsafe struct float5
-            {
-                NativeArray<float> values;
+            {                
+                fixed float f[5];
                 public float this[int i]
                 {
                     get
                     {
-                        if (!values.IsCreated) { Init(); }
-                        return values[i];
+                        i = math.clamp(i, 0, 4);
+                        return f[i];
                     }
                     set
                     {
-                        if (!values.IsCreated) { Init(); }
-                        values[i] = value;
+                        i = math.clamp(i, 0, 4);
+                        f[i] = value;
                     }
                 }
-
-                void Init()
-                {
-                    values = new NativeArray<float>(5, Allocator.Temp);
-                }
-
-                //fixed float f[5];
-                //public float this[int i]
-                //{
-                //    get
-                //    {
-                //        i = math.clamp(i, 0, 4);
-                //        return f[i];
-                //    }
-                //    set
-                //    {
-                //        i = math.clamp(i, 0, 4);
-                //        f[i] = value;
-                //    }
-                //}
             }
         }
     }

@@ -167,18 +167,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fd5cff9e8db7134c9af3ba5908594b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isLoop: 0
-  autoSetHandles: 0
+  isLoop: 1
+  autoSetHandles: 1
   cacheFramesPerSegment: 8
   anchors:
-  - position: {x: 0, y: 0, z: 0}
-    frontTangentNormalized: {x: 0, y: 1, z: 0}
-    frontLength: 2
-    backLength: 2
-  - position: {x: 1.5, y: 2, z: 0}
-    frontTangentNormalized: {x: 0.4472136, y: -0.8944272, z: 0}
-    frontLength: 1.118034
-    backLength: 1.118034
+  - position: {x: 3.187007, y: -1.4425335, z: -0.48574543}
+    frontTangentNormalized: {x: 0.9211706, y: 0.17393269, z: 0.34812656}
+    frontLength: 1.5217866
+    backLength: 1.9189602
+  - position: {x: 5.126373, y: 1.4275842, z: 1.0875463}
+    frontTangentNormalized: {x: -0.33932546, y: 0.90234196, z: 0.2657765}
+    frontLength: 1.985034
+    backLength: 1.5217866
+  - position: {x: 0.5164242, y: 3.215541, z: 0.6646595}
+    frontTangentNormalized: {x: -0.8922446, y: -0.22967935, z: -0.3887763}
+    frontLength: 1.2707721
+    backLength: 1.985034
+  - position: {x: -0.94995606, y: 0.93377566, z: -0.98947525}
+    frontTangentNormalized: {x: 0.29820403, y: -0.90300065, z: -0.3092964}
+    frontLength: 1.9189602
+    backLength: 1.2707721
   handleLineColor: {r: 1, g: 1, b: 1, a: 1}
   curveColor: {r: 0, g: 1, b: 0, a: 1}
   anchorColor: {r: 0, g: 0, b: 0, a: 1}
