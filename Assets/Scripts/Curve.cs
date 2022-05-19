@@ -13,6 +13,7 @@ namespace BezierCurve
     public partial class Curve : MonoBehaviour
     {
         [SerializeField] bool isLoop;
+        [SerializeField] bool autoSetHandles;
         [SerializeField, Min(8)] int cacheFramesPerSegment;
         [SerializeField] Anchor[] anchors;
         FrameCache cache;
@@ -41,7 +42,16 @@ namespace BezierCurve
         public Anchor this[int i]
         {
             get => anchors[i];
-            set => anchors[i] = value; // todo make sure anchors with same position don't cause problems
+            set
+            {
+                anchors[i] = value;
+                if (autoSetHandles)
+                {
+                    AutoSetHandles(i);
+                    if (i > 0) { AutoSetHandles(i - 1); }
+                    if (i < anchors.Length - 1) { AutoSetHandles(i + 1); }
+                }
+            }
         }
 
         public Curve()
@@ -62,7 +72,7 @@ namespace BezierCurve
 
         public void InitCache()
         {
-            //cache = new FrameCache(anchors, IsLoop, cacheFramesPerSegment * 2, cacheFramesPerSegment);
+            cache = new FrameCache(anchors, IsLoop, cacheFramesPerSegment * 2, cacheFramesPerSegment);
             Debug.Log("cache initialized");
         }
 
@@ -86,29 +96,27 @@ namespace BezierCurve
         public void AddAnchor(float3 position)
         {
             if (isLoop) { return; }
-            Anchor lastAnchor = anchors[anchors.Length - 1];
-            float3 offset = (position - lastAnchor.FrontHandle) * defaultHandleLengthMultiplier;
-            var anchor = new Anchor(position, offset);
+            var anchor = new Anchor(position, 1);
             ArrayUtility.Add(ref anchors, anchor);
+            AutoSetHandles(anchors.Length - 1);
         }
 
         public void InsertAnchor(float3 position, float time)
         {
             int p0Index = GetIndex((int)math.floor(time * (anchors.Length - 1)));
-            int p2Index = GetIndex(p0Index + 1);
-            Anchor p0 = anchors[p0Index];
-            Anchor p2 = anchors[p2Index];
-            float p0Distance = math.distance(p0.Position, position);
-            float p2Distance = math.distance(p2.Position, position);
-            float3 p0Direction = (p0.Position - position) / p0Distance;
-            float3 p2Direction = (p2.Position - position) / p2Distance;
-            var anchor = new Anchor(position, math.normalize(p2Direction - p0Direction) * p2Distance * defaultHandleLengthMultiplier);
+            var anchor = new Anchor(position, 1);
             ArrayUtility.Insert(ref anchors, anchor, p0Index + 1);
+            AutoSetHandles(p0Index + 1);
         }
 
         public void DeleteAnchor(int i)
         {
             ArrayUtility.RemoveAt(ref anchors, i);
+            if (autoSetHandles)
+            {
+                if (i > 0) { AutoSetHandles(i - 1); }
+                AutoSetHandles(i);
+            }
         }
 
         public int GetIndexOfNearestAnchor(in Ray ray)

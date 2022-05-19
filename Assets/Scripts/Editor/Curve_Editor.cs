@@ -15,12 +15,12 @@ namespace BezierCurve
         [SerializeField] Color anchorColor = Color.black;
         [SerializeField] Color anchorHighlightColor = Color.yellow;
         [SerializeField] Color handleColor = Color.white;
-        [SerializeField] Color tangentColor = Color.blue;
         [SerializeField] Color normalColor = Color.green;
         [SerializeField, Min(.05f)] float anchorSize = .1f;
         [SerializeField, Min(.05f)] float handleSize = .1f;
         [SerializeField, Min(2)] int lineCountPerSegment = 32;
-        [SerializeField] bool drawFramesInCache;
+        [SerializeField] bool drawNormals = false;
+        [SerializeField] float normalsPreviewLength = 1;
         [SerializeField, Min(0)] int lerpFrameCount = 0;
         const float mouseHighlightDistanceMultiplier = .3f;
 
@@ -65,6 +65,13 @@ namespace BezierCurve
                 loopField.RegisterValueChangeCallback(InitCache);
                 root.Add(loopField);
 
+                var autoSetHandlesField = new PropertyField(so.FindProperty(nameof(autoSetHandles)));
+                autoSetHandlesField.RegisterValueChangeCallback((e) =>
+                {
+                    PerformStructuralChange("Auto set handles", curve.AutoSetHandles);
+                });
+                root.Add(autoSetHandlesField);
+
                 var framesPerSegmentField = new PropertyField(so.FindProperty(nameof(cacheFramesPerSegment)));
                 framesPerSegmentField.RegisterValueChangeCallback(InitCache);
                 root.Add(framesPerSegmentField);
@@ -76,31 +83,24 @@ namespace BezierCurve
                 resetButton.text = "Reset curve";
                 root.Add(resetButton);
 
-                var autoSetHandlesButton = new Button(() =>
-                {
-                    PerformStructuralChange("Auto set handles", curve.AutoSetHandles);
-                });
-                autoSetHandlesButton.text = "Auto Set Handles";
-                root.Add(autoSetHandlesButton);
-
                 //var anchorsArrayField = new PropertyField(so.FindProperty(nameof(anchors)));
                 //root.Add(anchorsArrayField);
 
                 var foldout = new Foldout();
                 foldout.value = false;
                 foldout.text = "Preview Settings";
+                foldout.Add(new PropertyField(so.FindProperty(nameof(drawNormals)), "Draw Normals"));
+                foldout.Add(new PropertyField(so.FindProperty(nameof(normalsPreviewLength)), "Normals Preview Length"));
+                foldout.Add(new PropertyField(so.FindProperty(nameof(lerpFrameCount)), "Lerp Frame Count"));
                 foldout.Add(new PropertyField(so.FindProperty(nameof(handleLineColor)), "Handle Lines Color"));
                 foldout.Add(new PropertyField(so.FindProperty(nameof(curveColor)), "Curve Color"));
                 foldout.Add(new PropertyField(so.FindProperty(nameof(anchorColor)), "Anchor Color"));
                 foldout.Add(new PropertyField(so.FindProperty(nameof(anchorHighlightColor)), "Anchor Highlight Color"));
                 foldout.Add(new PropertyField(so.FindProperty(nameof(handleColor)), "Handle Color"));
-                foldout.Add(new PropertyField(so.FindProperty(nameof(tangentColor)), "Tangent Color"));
                 foldout.Add(new PropertyField(so.FindProperty(nameof(normalColor)), "Normal Color"));
                 foldout.Add(new PropertyField(so.FindProperty(nameof(anchorSize)), "Anchor Size"));
                 foldout.Add(new PropertyField(so.FindProperty(nameof(handleSize)), "Handle Size"));
                 foldout.Add(new PropertyField(so.FindProperty(nameof(lineCountPerSegment)), "Count Per Segment"));
-                foldout.Add(new PropertyField(so.FindProperty(nameof(drawFramesInCache)), "Draw Frames In Cache"));
-                foldout.Add(new PropertyField(so.FindProperty(nameof(lerpFrameCount)), "Lerp Frame Count"));
                 root.Add(foldout);
 
                 return root;
@@ -116,16 +116,19 @@ namespace BezierCurve
                 for (int i = 0; i < curve.AnchorCount; i++)
                 {
                     var anchor = curve[i];
-                    DrawHandleLines(anchor);
-                    if (curve.drawFramesInCache) { DrawFrames(); }
-                    DrawLerpedFrames();
-                    if (DrawAndEditAnchor(ref anchor) ||
-                        DrawAndEditBackHandle(ref anchor) ||
-                        DrawAndEditFrontHandle(ref anchor))
+                    if (curve.drawNormals) { DrawNormals(); }
+                    DrawLerpedNormals();
+                    if (DrawAndEditAnchor(ref anchor))
                     {
-                        Undo.RecordObject(target, $"Edit curve anchor");
-                        curve[i] = anchor;
-                        curve.InitCache();
+                        PerformStructuralChange("Edit curve anchor", () => { curve[i] = anchor; });
+                    }
+                    if (!curve.autoSetHandles)
+                    {
+                        DrawHandleLines(anchor);
+                        if (DrawAndEditBackHandle(ref anchor) || DrawAndEditFrontHandle(ref anchor))
+                        {
+                            PerformStructuralChange("Edit curve handles", () => { curve[i] = anchor; });
+                        }
                     }
                 }
                 CheckForAdd();
@@ -136,14 +139,6 @@ namespace BezierCurve
             {
                 Undo.RecordObject(target, actionDescription);
                 action();
-                curve.InitCache();
-                SceneView.RepaintAll();
-            }
-
-            void PerformStructuralChange<T>(string actionDescription, T value, System.Action<T> action)
-            {
-                Undo.RecordObject(target, actionDescription);
-                action(value);
                 curve.InitCache();
                 SceneView.RepaintAll();
             }
@@ -194,54 +189,52 @@ namespace BezierCurve
                 return false;
             }
 
-            void DrawFrames()
+            void DrawNormals()
             {
                 for (int i = 0; i < curve.Cache.FrameCount; i++)
                 {
-                    DrawFrame(curve.Cache.GetFrameAtIndex(i));
+                    DrawNormal(curve.Cache.GetFrameAtIndex(i));
                 }
             }
 
-            void DrawLerpedFrames()
+            void DrawLerpedNormals()
             {
                 for (int i = 0; i < curve.lerpFrameCount; i++)
                 {
                     float t = (float)i / (curve.lerpFrameCount - 1);
-                    DrawFrame(curve.Cache.GetFrameAtTime(t));
+                    DrawNormal(curve.Cache.GetFrameAtTime(t));
                 }
             }
 
-            void DrawFrame(Frame frame)
+            void DrawNormal(Frame frame)
             {
-                Handles.color = curve.tangentColor;
-                Handles.DrawLine(frame.position, frame.position + frame.tangent);
                 Handles.color = curve.normalColor;
-                Handles.DrawLine(frame.position, frame.position + frame.normal);
+                Handles.DrawLine(frame.position, frame.position + frame.normal * curve.normalsPreviewLength);
             }
 
             void CheckForDelete()
             {
                 Event guiEvent = Event.current;
-                if (guiEvent.control && !guiEvent.shift)
+                if (curve.AnchorCount > 2 && guiEvent.control && !guiEvent.shift)
                 {
                     Handles.color = curve.anchorHighlightColor;
                     Ray ray = HandleUtility.GUIPointToWorldRay(guiEvent.mousePosition);
                     int nearestAnchorIndex = curve.GetIndexOfNearestAnchor(ray);
                     var anchor = curve.anchors[nearestAnchorIndex];
                     float worldSize = HandleUtility.GetHandleSize(anchor.Position);
-                    Handles.FreeMoveHandle(anchor.Position, Quaternion.identity, worldSize * curve.anchorSize, Vector3.zero, Handles.SphereHandleCap);
                     if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0)
                     {
                         Debug.Log("clicked to delete");
-                        PerformStructuralChange("Delete anchor", nearestAnchorIndex, curve.DeleteAnchor);
+                        PerformStructuralChange("Delete anchor", () => { curve.DeleteAnchor(nearestAnchorIndex); });
                     }
+                    Handles.FreeMoveHandle(anchor.Position, Quaternion.identity, worldSize * curve.anchorSize, Vector3.zero, Handles.SphereHandleCap);
                     SceneView.RepaintAll();
                 }
             }
 
             void CheckForAdd()
             {
-                Event guiEvent = Event.current;                
+                Event guiEvent = Event.current;
                 if (guiEvent.shift && !guiEvent.control)
                 {
                     Handles.color = curve.anchorHighlightColor;
@@ -252,19 +245,23 @@ namespace BezierCurve
                     if (p.projectionDistance < highlightDistance)
                     {
                         pos = p.position;
+                        if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0)
+                        {
+                            PerformStructuralChange("Add anchor", () => { curve.InsertAnchor(pos, p.curveTime); });
+                            guiEvent.Use();
+                        }
                     }
                     else
                     {
                         pos = ray.Projection(p.position);
+                        if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0)
+                        {
+                            PerformStructuralChange("Add anchor", () => { curve.AddAnchor(pos); });
+                            guiEvent.Use();
+                        }
                     }
                     float worldSize = HandleUtility.GetHandleSize(pos);
                     Handles.FreeMoveHandle(pos, Quaternion.identity, worldSize * curve.anchorSize, Vector3.zero, Handles.SphereHandleCap);
-                    if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0)
-                    {
-                        Debug.Log($"clicked to add {pos}");
-                        PerformStructuralChange("Add anchor", pos, curve.AddAnchor);
-                        guiEvent.Use();
-                    }
                     SceneView.RepaintAll();
                 }
             }
