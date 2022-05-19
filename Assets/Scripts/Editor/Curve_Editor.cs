@@ -22,7 +22,7 @@ namespace BezierCurve
         [SerializeField, Min(2)] int lineCountPerSegment = 32;
         [SerializeField] bool drawFramesInCache;
         [SerializeField, Min(0)] int lerpFrameCount = 0;
-        [SerializeField, Min(.01f)] float mouseHighlightMinDistance = .1f;
+        const float mouseHighlightDistanceMultiplier = .3f;
 
         private void OnValidate()
         {
@@ -101,7 +101,6 @@ namespace BezierCurve
                 foldout.Add(new PropertyField(so.FindProperty(nameof(lineCountPerSegment)), "Count Per Segment"));
                 foldout.Add(new PropertyField(so.FindProperty(nameof(drawFramesInCache)), "Draw Frames In Cache"));
                 foldout.Add(new PropertyField(so.FindProperty(nameof(lerpFrameCount)), "Lerp Frame Count"));
-                foldout.Add(new PropertyField(so.FindProperty(nameof(mouseHighlightMinDistance)), "Mouse Highlight Distance"));
                 root.Add(foldout);
 
                 return root;
@@ -128,9 +127,9 @@ namespace BezierCurve
                         curve[i] = anchor;
                         curve.InitCache();
                     }
-                    CheckForDelete();
-                    CheckForAdd();
                 }
+                CheckForAdd();
+                CheckForDelete();
             }
 
             void PerformStructuralChange(string actionDescription, System.Action action)
@@ -242,28 +241,29 @@ namespace BezierCurve
 
             void CheckForAdd()
             {
-                Event guiEvent = Event.current;
+                Event guiEvent = Event.current;                
                 if (guiEvent.shift && !guiEvent.control)
                 {
                     Handles.color = curve.anchorHighlightColor;
                     Ray ray = HandleUtility.GUIPointToWorldRay(guiEvent.mousePosition);
-                    var rayProjection = curve.ProjectRay(ray);
-                    Debug.Log($"pos {rayProjection.position}, time {rayProjection.curveTime}, distance {rayProjection.rayDistance}");
+                    var p = curve.ProjectRay(ray, 10);
                     float3 pos;
-                    if (rayProjection.rayDistance < curve.mouseHighlightMinDistance)
+                    float highlightDistance = HandleUtility.GetHandleSize(p.position) * mouseHighlightDistanceMultiplier;
+                    if (p.projectionDistance < highlightDistance)
                     {
-                        pos = rayProjection.position;
+                        pos = p.position;
                     }
                     else
                     {
-                        pos = ray.Projection(rayProjection.position);
+                        pos = ray.Projection(p.position);
                     }
                     float worldSize = HandleUtility.GetHandleSize(pos);
                     Handles.FreeMoveHandle(pos, Quaternion.identity, worldSize * curve.anchorSize, Vector3.zero, Handles.SphereHandleCap);
                     if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0)
                     {
                         Debug.Log($"clicked to add {pos}");
-                        //PerformStructuralChange("Add anchor", pos, curve.AddAnchor);
+                        PerformStructuralChange("Add anchor", pos, curve.AddAnchor);
+                        guiEvent.Use();
                     }
                     SceneView.RepaintAll();
                 }

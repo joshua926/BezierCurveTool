@@ -190,7 +190,6 @@ MonoBehaviour:
   lineCountPerSegment: 32
   drawFramesInCache: 0
   lerpFrameCount: 0
-  mouseHighlightMinDistance: 0.1
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,17 +6,17 @@ namespace BezierCurve
     public struct Ray
     {
         public float3 origin;
-        float3 direction;
+        float3 directionNormalized;
         public float3 Direction
         {
-            get => direction;
-            set => direction = math.normalize(value);
+            get => directionNormalized;
+            set => directionNormalized = math.normalize(value);
         }
 
         public Ray(float3 origin, float3 direction)
         {
             this.origin = origin;
-            this.direction = math.normalize(direction);
+            this.directionNormalized = math.normalize(direction);
         }
 
         public static implicit operator Ray(UnityEngine.Ray ray)
@@ -26,18 +26,25 @@ namespace BezierCurve
 
         public float3 Projection(float3 point)
         {
-            float projectionDistanceFromOrigin = math.dot(point - origin, Direction);
-            return origin + Direction * projectionDistanceFromOrigin;
+            return origin + Direction * ProjectionTime(point);
         }
 
-        public float Distancesq(float3 point)
+        public float ProjectionTime(float3 point)
+        {
+            return math.dot(point - origin, directionNormalized);
+        }
+
+        public float ProjectionDistanceSq(float3 point)
         {
             return math.distancesq(Projection(point), point);
         }
 
-        public float3 GetPoint(float distance)
+        /// <summary>
+        /// Ray direction is normalized, so ray time and distance along ray are equal.
+        /// </summary>
+        public float3 GetPoint(float time)
         {
-            return origin + Direction * distance;
+            return origin + Direction * time;
         }
     }
 }

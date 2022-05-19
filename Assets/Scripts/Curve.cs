@@ -117,7 +117,7 @@ namespace BezierCurve
             float distancesqMin = float.PositiveInfinity;
             for (int i = 0; i < anchors.Length; i++)
             {
-                float distancesq = ray.Distancesq(anchors[i].Position);
+                float distancesq = ray.ProjectionDistanceSq(anchors[i].Position);
                 if (distancesq < distancesqMin)
                 {
                     distancesqMin = distancesq;
@@ -127,7 +127,7 @@ namespace BezierCurve
             return indexOfNearest;
         }
 
-        public (float3 position, float rayDistance, float curveTime) ProjectRay(in Ray ray, int refineCount = 10)
+        public (float3 position, float projectionDistance, float curveTime, float rayTime) ProjectRay(in Ray ray, int refineCount = 10)
         {
             int index = 0;
             float distanceMin = float.PositiveInfinity;
@@ -135,9 +135,9 @@ namespace BezierCurve
             {
                 var segment = GetSegmentAtIndex(i);
                 var projection = segment.ProjectRay(ray, 1);
-                if (projection.rayDistance < distanceMin)
+                if (projection.projectionDistance < distanceMin)
                 {
-                    distanceMin = projection.rayDistance;
+                    distanceMin = projection.projectionDistance;
                     index = i;
                 }
             }
@@ -145,7 +145,7 @@ namespace BezierCurve
             float segmentTimeRange = 1f / SegmentCount;
             float curveTimeFloor = (float)index / SegmentCount;
             float curveTime = curveTimeFloor + segmentTimeRange * p.segmentTime;
-            return (p.position, p.rayDistance, curveTime);
+            return (p.position, p.projectionDistance, curveTime, p.rayTime);
         }
 
         public void AutoSetHandles()

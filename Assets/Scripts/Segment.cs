@@ -59,7 +59,7 @@ namespace BezierCurve
                 return e - d;
             }
 
-            public (float3 position, float rayDistance, float segmentTime) ProjectRay(in Ray ray, int iterations)
+            public (float3 position, float projectionDistance, float segmentTime, float rayTime) ProjectRay(in Ray ray, int iterations)
             {
                 iterations = math.max(1, iterations);
                 (float5 times, float5 distances) = GetInitialValues(ray);
@@ -69,9 +69,11 @@ namespace BezierCurve
                     ZoomIn(ref times, ref distances);
                 }
                 int indexOfMinDistance = GetIndexOfMinDistance(distances);
-                float rayDistance = math.sqrt(distances[indexOfMinDistance]);
+                float projectionDistance = math.sqrt(distances[indexOfMinDistance]);
                 float segmentTime = times[indexOfMinDistance];
-                return (Position(segmentTime), rayDistance, segmentTime);
+                float3 pos = Position(segmentTime);
+                float rayTime = ray.ProjectionTime(pos);
+                return (pos, projectionDistance, segmentTime, rayTime);
             }
 
             (float5 times, float5 distances) GetInitialValues(in Ray ray)
@@ -81,9 +83,9 @@ namespace BezierCurve
                 times[2] = .5f;
                 times[4] = 1;
                 float5 distances = default;
-                distances[0] = ray.Distancesq(points[0]);
-                distances[2] = ray.Distancesq(Position(.5f));
-                distances[4] = ray.Distancesq(points[3]);
+                distances[0] = ray.ProjectionDistanceSq(points[0]);
+                distances[2] = ray.ProjectionDistanceSq(Position(.5f));
+                distances[4] = ray.ProjectionDistanceSq(points[3]);
                 return (times, distances);
             }
 
@@ -91,8 +93,8 @@ namespace BezierCurve
             {
                 times[1] = (times[0] + times[2]) * .5f;
                 times[3] = (times[2] + times[4]) * .5f;
-                distances[1] = ray.Distancesq(Position(times[1]));
-                distances[3] = ray.Distancesq(Position(times[3]));
+                distances[1] = ray.ProjectionDistanceSq(Position(times[1]));
+                distances[3] = ray.ProjectionDistanceSq(Position(times[3]));
             }
 
             void ZoomIn(ref float5 times, ref float5 distances)
@@ -103,7 +105,7 @@ namespace BezierCurve
                 distances[2] = distances[centerIndex];
                 times[0] = times[centerIndex - 1];
                 times[4] = times[centerIndex + 1];
-                times[2] = times[2];
+                times[2] = times[centerIndex];
             }
 
             int GetIndexOfMinDistance(in float5 distances)
