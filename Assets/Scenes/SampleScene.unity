@@ -167,26 +167,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fd5cff9e8db7134c9af3ba5908594b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isLoop: 1
+  isLoop: 0
   autoSetHandles: 1
   cacheFramesPerSegment: 8
   anchors:
   - position: {x: 3.187007, y: -1.4425335, z: -0.48574543}
-    frontTangentNormalized: {x: 0.9211706, y: 0.17393269, z: 0.34812656}
-    frontLength: 1.5217866
-    backLength: 1.9189602
-  - position: {x: 5.126373, y: 1.4275842, z: 1.0875463}
-    frontTangentNormalized: {x: -0.33932546, y: 0.90234196, z: 0.2657765}
-    frontLength: 1.985034
-    backLength: 1.5217866
-  - position: {x: 0.5164242, y: 3.215541, z: 0.6646595}
-    frontTangentNormalized: {x: -0.8922446, y: -0.22967935, z: -0.3887763}
-    frontLength: 1.2707721
-    backLength: 1.985034
-  - position: {x: -0.94995606, y: 0.93377566, z: -0.98947525}
-    frontTangentNormalized: {x: 0.29820403, y: -0.90300065, z: -0.3092964}
-    frontLength: 1.9189602
-    backLength: 1.2707721
+    frontTangentNormalized: {x: -0.90358055, y: 0.34545976, z: 0.25337678}
+    frontLength: 3.275505
+    backLength: 3.275505
+  - position: {x: -4.2121997, y: 1.3863544, z: 1.589097}
+    frontTangentNormalized: {x: -0.08635925, y: 0.67651224, z: 0.73135036}
+    frontLength: 5.532117
+    backLength: 3.275505
+  - position: {x: 7.0972624, y: 5.9096565, z: 8.139882}
+    frontTangentNormalized: {x: 0.06114759, y: 0.53530073, z: 0.8424453}
+    frontLength: 10.2344885
+    backLength: 5.532117
+  - position: {x: -11.872522, y: 14.637369, z: 22.925991}
+    frontTangentNormalized: {x: -0.74140626, y: 0.3411099, z: 0.57789344}
+    frontLength: 10.2344885
+    backLength: 10.2344885
+  - position: {x: 5.5113688, y: 19.873497, z: 23.852362}
+    frontTangentNormalized: {x: 0.95626396, y: 0.28803217, z: 0.050958373}
+    frontLength: 7.2715874
+    backLength: 7.2715874
+  - position: {x: -4.944528, y: 19.904022, z: 36.095284}
+    frontTangentNormalized: {x: -0.64942724, y: 0.0018959543, z: 0.76042134}
+    frontLength: 6.4400725
+    backLength: 6.4400725
+  - position: {x: -7.5847325, y: 22.705894, z: 43.449184}
+    frontTangentNormalized: {x: -0.31807148, y: 0.33754796, z: 0.88594127}
+    frontLength: 3.3202655
+    backLength: 3.3202655
+  - position: {x: 1.265039, y: 24.955364, z: 47.285545}
+    frontTangentNormalized: {x: 0.89352334, y: 0.22711928, z: 0.38734084}
+    frontLength: 3.9617417
+    backLength: 3.9617417
+  - position: {x: 5.649065, y: 27.31461, z: 50.34485}
+    frontTangentNormalized: {x: 0.7502555, y: 0.40374687, z: 0.52355057}
+    frontLength: 2.3373508
+    backLength: 2.3373508
   handleLineColor: {r: 1, g: 1, b: 1, a: 1}
   curveColor: {r: 0, g: 1, b: 0, a: 1}
   anchorColor: {r: 0, g: 0, b: 0, a: 1}
@@ -376,4 +396,117 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1748687046
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1748687051}
+  - component: {fileID: 1748687050}
+  - component: {fileID: 1748687049}
+  - component: {fileID: 1748687048}
+  - component: {fileID: 1748687047}
+  m_Layer: 0
+  m_Name: Cube
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1748687047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748687046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb3167217ef8d69408408905ebcebc53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  curve: {fileID: 398007006}
+  speed: 1
+  startPercentage: 0
+--- !u!65 &1748687048
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748687046}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &1748687049
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748687046}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1748687050
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748687046}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1748687051
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748687046}
+  m_LocalRotation: {x: 0.13345829, y: -0.5962386, z: -0.43739164, w: 0.659831}
+  m_LocalPosition: {x: 3.187007, y: -1.4425335, z: -0.48574543}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

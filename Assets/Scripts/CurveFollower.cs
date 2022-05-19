@@ -7,20 +7,23 @@ namespace BezierCurve
     public class CurveFollower : MonoBehaviour
     {
         [SerializeField] Curve curve;
-        [Tooltip("Speed in curve percent per second.")]
+        [Tooltip("Speed in curve time per second.")]
         [SerializeField] float speed = .01f;
-        [SerializeField, Range(0, 1)] float startPercentage = 0;
+        [SerializeField] float startPercentage = 0;
         float currentPercentage;
 
+#if UNITY_EDITOR
         private void OnValidate()
         {
-            SetTransform(startPercentage);            
+            UnityEditor.Undo.RecordObject(transform, "Set position to curve");
+            SetTransform(startPercentage);
         }
+#endif
 
         private void Start()
         {
             currentPercentage = startPercentage;
-            SetTransform(startPercentage);
+            SetTransform(currentPercentage);
         }
 
         private void Update()
@@ -31,9 +34,13 @@ namespace BezierCurve
 
         void SetTransform(float curveTime)
         {
-            var frame = curve.Cache.GetFrameAtTime(curveTime);
-            transform.position = frame.position;
-            transform.rotation = Quaternion.LookRotation(frame.tangent, frame.normal);
+            if (curve)
+            {
+                float t = curveTime % 1f;
+                var frame = curve.Cache.GetFrameAtTime(t);
+                transform.position = frame.position;
+                transform.rotation = Quaternion.LookRotation(frame.tangent, frame.normal);
+            }
         }
     }
 }
