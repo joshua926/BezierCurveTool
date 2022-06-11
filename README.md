@@ -33,3 +33,13 @@ There are several code objects the Curve MonoBehaviour class depends on internal
 ## Known Issues
 - When curve has isLoop and autoSetHandles set to true, sometimes inserting an anchor in a segment adds it to a nearby segment instead.
 - When curve has isLoop set to true, the start and end normals don't quite match exactly.
+
+## Media
+https://user-images.githubusercontent.com/69609839/173168381-326adf01-d688-4404-9251-f0acf7d18b70.mp4
+
+https://user-images.githubusercontent.com/69609839/173168487-b69f0441-0620-4520-a85a-74ea1046c9c7.mp4
+
+
+
+
+
